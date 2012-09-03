@@ -1,0 +1,182 @@
+\documentclass{beamer}
+    \usetheme{Montpellier}
+    \usecolortheme{beaver}
+    \usefonttheme{professionalfonts}
+
+    \usepackage{overpic}
+    \usepackage{lmodern}
+
+
+\author{Jarrett  Byrnes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\title{Introduction  to  An  Introduction  to  Computational  Data  Analysis  for  Biology}
+\date{Sept  4,  2012}
+
+\frame{\titlepage}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{What is this course about?}
+  \begin{itemize}
+  \item Introduction to \visible<2->{- starting with the basics}
+  \item Computational \visible<3->{- programming \& other computational tools}
+  \item Data \visible<4->{- collection, curation, maintenance of information}
+  \item Analysis \visible<5->{- statistics}
+  \item for Biology \visible<6->{- SCIENCE FIRST}
+  \end{itemize}
+  
+  \begin{block}<7->{Course Goal}
+  To have you be able to go from your ideas about a system to a model, fit and evaluated with the appropriate data.
+  \end{block}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Why a computational focus?}
+
+<<code, eval=FALSE, out.width='0.5\\textwidth'>>=
+library(plyr)
+
+ddply(eelgrass, .genotypes, function(x){
+  print(summary(lm(shoots ~ geese, data=x)))
+  })
+@
+
+\pause
+
+ \begin{itemize}
+  \item{We live in the era of big data}
+  \pause
+  
+  \item{Programming is a necessary skill for everything}
+  \pause
+  
+  \item{Comfort with algorithmic thinking helps your science}
+ \end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% INTRODUCTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{How will we use statistics\?}
+\begin{columns}
+ \column{.5\textwidth}
+   \begin{itemize}
+     \item<2->{Estimation}
+      \begin{itemize}
+        \item{Parameter in model}
+        \item{Variance in parameter estimation}
+      \end{itemize}
+      \hfill \\ 
+      \hfill \\ 
+     \item<3->{Model Evaluation}
+     \begin{itemize}
+        \item{What parameters should be included in a model?}
+        \item{Does a model fit the data?}
+        \item{Comparison of competing hypotheses}
+      \end{itemize}
+   \end{itemize}
+ \column{.5\textwidth}
+ 
+<<genotypes, echo=FALSE, out.width='.95\\textwidth', out.height='0.95\\textwidth', fig.align='center',fig.width=3, fig.height=3>>=
+##a little Reusch eelgrass plot
+library(ggplot2)
+eelgrass<-read.csv("./data/15q05EelgrassGenotypes.csv")
+qplot(treatment.genotypes, shoots, data=eelgrass, geom="point")+
+  geom_point(size=2) +
+  stat_smooth(method="lm", colour='red', lwd=3) +
+  xlab("# of genotypes") + 
+  ylab("# of eelgrass shoots") +
+  theme_bw()
+@
+
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Who Am I?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\center{
+ \begin{huge}Who Am I?\end{huge}
+}
+
+\end{frame}
+
+\begingroup
+  \setbeamercolor{background canvas}{bg=black}
+
+\begin{frame}[plain]
+\center{
+  \begin{overpic}[width=0.99\paperwidth]%
+   {pics/Sonoma_coast.jpg}
+   \put(5,10){\textcolor{white}{\huge 1. Marine Ecologist}}
+  \end{overpic}  
+}
+\end{frame}
+
+\begin{frame}
+
+Climate Impacts in Kelp Forests
+\end{frame}
+
+
+\begin{frame}
+
+Biodiversity's Effect on Ecosystem Function
+\end{frame}
+
+\begin{frame}
+
+Experimentalist
+\end{frame}
+
+\begin{frame}
+
+Big Data
+\end{frame}
+
+\begin{frame}
+
+Link Scientific Understanding of a Complex World to Statistical Models
+\end{frame}
+
+
+\endgroup
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Who Are You?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\center{
+ \begin{huge}Who Are You?\end{huge}
+ \hfill \\
+ \hfill \\
+ \pause
+  \begin{enumerate}
+   \item{Name}
+   \item{Lab}
+   \item{Brief research description}
+   \item{Why are you here?}
+  \end{enumerate}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Who Are You?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
