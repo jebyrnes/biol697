@@ -5,12 +5,16 @@
 %%% Last Modified 9/4/2012
 %%%
 %%% Changelog:
-%%%
+%%% 9/4/2012 - Fixed several typos
 %%%%%%%%%%%%%%%%%%%%%%%%
 
     %%%for handouts
     %\usepackage{pgfpages}
     %\pgfpagesuselayout{4 on 1}
+    %\pgfpageslogicalpageoptions{1}{border code=\pgfusepath{stroke}}
+    %\pgfpageslogicalpageoptions{2}{border code=\pgfusepath{stroke}}
+    %\pgfpageslogicalpageoptions{3}{border code=\pgfusepath{stroke}}
+    %\pgfpageslogicalpageoptions{4}{border code=\pgfusepath{stroke}}
 
     %%%appearance
     \usetheme{Montpellier}
@@ -36,6 +40,8 @@ options(width = 60)
 @
 
 \title{Introduction  to  An  Introduction  to  Computational  Data  Analysis  for  Biology}
+\subtitle{\hfill \\ \url{http://jarrettbyrnes.info/biol697}}
+\institute{UMass Boston}
 \date{Sept  4,  2012}
 
 \frame{\titlepage}
@@ -72,8 +78,8 @@ options(width = 60)
   \item for Biology \visible<6->{- SCIENCE FIRST}
   \end{itemize}
   
-  \begin{block}<7->{The Big Goal}
-  To have you be able to go from your ideas about a system to a model, fit and evaluated with the appropriate data.
+  \begin{block}<7->{What I want for you:l}
+  To be able to go from your ideas about a system to a model, fit and evaluated with the appropriate data.
   \end{block}
 \end{frame}
 
@@ -127,10 +133,11 @@ d_ply(eelgrass, .genotypes, function(x){
 \pause
 
  \begin{itemize}
-  \item{We live in the era of big data}
-  \pause
   
   \item{Programming is a necessary skill for everything}
+  \pause
+  
+  \item{We live in the era of big data}
   \pause
   
   \item{Comfort with algorithmic thinking helps your science}
@@ -179,6 +186,7 @@ qplot(treatment.genotypes, shoots, data=eelgrass, geom="point")+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Two Different Skillsets}
+\Large{
   \begin{itemize}
   \item Statistics
   \hfill \\
@@ -186,7 +194,7 @@ qplot(treatment.genotypes, shoots, data=eelgrass, geom="point")+
   \hfill \\
   \item Programming
   \end{itemize}
-  
+}  
 \end{frame}
 
 
@@ -681,8 +689,8 @@ graphical facilities for data analysis and display either on-screen or on hardco
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]
-\frametitle{The Console and Math}
-code
+\frametitle{Everything is an Object}
+
 
 <<objCode1>>=
 a.number<-1+1
@@ -692,6 +700,7 @@ a.number<-1+1
 <<objCode2>>=
 a.number
 @
+\pause
 
 \end{frame}
 
@@ -721,7 +730,7 @@ a.number<-1+1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]
 \frametitle{Functions Work on Objects}
-code
+
 
 <<funcCode>>=
 sin(a.number)
@@ -733,6 +742,8 @@ How to get help for a function
 ?cos
 
 help(cos)
+
+??'cosine function'
 @
 
 \end{frame}
@@ -740,7 +751,7 @@ help(cos)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]
 \frametitle{Lots of Object Types - like Data!}
-code
+
 
 <<dataCode>>=
 head(cars, n=3) #note the n= argument!
@@ -847,15 +858,15 @@ qplot(factor(cyl), mpg, data=mtcars, geom="boxplot")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Next time}
-
+\Large{
 \begin{itemize}
   \item Data Management!
   \item Contact me if you are not enrolled 
-  \item Read Chapter 1 of the Nutshell
-  \item Read P-Values Chapters 1, 32-34 \& Ponder
+  \item Read chapter 1 of the Nutshell
+  \item Read P-Values chapters 1, 32-34 \& ponder
  
 \end{itemize}
-
+}
 \end{frame}
 
 
