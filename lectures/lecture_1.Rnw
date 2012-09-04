@@ -1,16 +1,31 @@
 \documentclass{beamer}
+
+    %%%for handouts
+    %\usepackage{pgfpages}
+    %\pgfpagesuselayout{4 on 1}
+
+    %%%appearance
     \usetheme{Montpellier}
     \usecolortheme{beaver}
     \usefonttheme{professionalfonts}
 
+    %%%useful packages for effects
     \usepackage{overpic}
     \usepackage{lmodern}
+    \usepackage{mdframed}
 
+    \usepackage{hyperref} %must be last
 
 \author{Jarrett  Byrnes}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
+%%set font sizes correctly for code
+<<setup, include=FALSE>>=
+# smaller font size for chunks
+opts_chunk$set(size = 'footnotesize')
+options(width = 60)
+@
 
 \title{Introduction  to  An  Introduction  to  Computational  Data  Analysis  for  Biology}
 \date{Sept  4,  2012}
@@ -20,7 +35,27 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{What is this course about?}
+\frametitle{Outline for Today}
+
+\begin{enumerate}
+  \item Why this course?
+  \item Who are we?
+  \item How will we approach the work?
+  \item How will this course work?
+  \item R!
+ 
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% INTRODUCTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{What is this Course About?}
   \begin{itemize}
   \item Introduction to \visible<2->{- starting with the basics}
   \item Computational \visible<3->{- programming \& other computational tools}
@@ -29,20 +64,54 @@
   \item for Biology \visible<6->{- SCIENCE FIRST}
   \end{itemize}
   
-  \begin{block}<7->{Course Goal}
+  \begin{block}<7->{The Big Goal}
   To have you be able to go from your ideas about a system to a model, fit and evaluated with the appropriate data.
   \end{block}
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Course Goals
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Course Goals}
+\pause
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+  \item{Learn how to think about your research 
+in a systematic way to design efficient observational \& experimental studies.}
+  \hfill \\
+  \hfill \\
+  \pause
+  
+  \item{Understand how to get the most bang for your buck from your data.}
+  \hfill \\
+  \hfill \\
+  \pause
+
+  \item{Make you effective collaborators with statisticians.}
+  \hfill \\
+  \hfill \\
+  \pause
+
+  \item{Make you comfortable enough to learn and grow beyond this class.}
+  \hfill \\
+  \hfill \\
+
+\end{enumerate}
+
+\end{frame}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]
-\frametitle{Why a computational focus?}
+\frametitle{Why a Computational Focus?}
 
 <<code, eval=FALSE, out.width='0.5\\textwidth'>>=
 library(plyr)
 
-ddply(eelgrass, .genotypes, function(x){
+d_ply(eelgrass, .genotypes, function(x){
   print(summary(lm(shoots ~ geese, data=x)))
   })
 @
@@ -61,13 +130,10 @@ ddply(eelgrass, .genotypes, function(x){
 
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%% INTRODUCTION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]
-\frametitle{How will we use statistics\?}
+\frametitle{How will we use statistics?}
 \begin{columns}
  \column{.5\textwidth}
    \begin{itemize}
@@ -102,10 +168,33 @@ qplot(treatment.genotypes, shoots, data=eelgrass, geom="point")+
 \end{columns}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Two Different Skillsets}
+  \begin{itemize}
+  \item Statistics
+  \hfill \\
+  \hfill \\
+  \hfill \\
+  \item Programming
+  \end{itemize}
+  
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center{
+ \begin{huge}Questions? \end{huge} 
+}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%% Who Am I?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \center{
  \begin{huge}Who Am I?\end{huge}
@@ -117,49 +206,88 @@ qplot(treatment.genotypes, shoots, data=eelgrass, geom="point")+
   \setbeamercolor{background canvas}{bg=black}
 
 \begin{frame}[plain]
-\center{
-  \begin{overpic}[width=0.99\paperwidth]%
-   {pics/Sonoma_coast.jpg}
+
+ \begin{overpic}[width=0.99\paperwidth]%
+   {pics-1/Sonoma_coast.jpg}
    \put(5,10){\textcolor{white}{\huge 1. Marine Ecologist}}
   \end{overpic}  
-}
+
 \end{frame}
 
-\begin{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
 
-Climate Impacts in Kelp Forests
+ \begin{overpic}[width=\paperwidth]%
+   {pics-1/Catalina_kelp_forest_1.jpg}
+   \put(5,10){\textcolor{white}{\huge 2. Climate Impacts in Kelp Forests}}
+  \end{overpic}  
 \end{frame}
 
 
-\begin{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
+ \begin{overpic}[width=\paperwidth]%
+   {pics-1/divshot.jpg}
+   \put(5,5){\textcolor{white}{\Large 3. Biodiversity's Effect on Ecosystem Function}}
+  \end{overpic}
 
-Biodiversity's Effect on Ecosystem Function
 \end{frame}
 
-\begin{frame}
 
-Experimentalist
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
+ \begin{overpic}[width=0.9\paperwidth]%
+   {pics-1/expt.jpg}
+   \put(5,5){\textcolor{black}{\Large 4. Experimentalist}}
+  \end{overpic}
+
 \end{frame}
 
-\begin{frame}
-
-Big Data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
+\begin{columns}
+ \column{.6\textwidth}
+  \includegraphics[width=\textwidth]{pics-1/ltermap.jpg}
+  
+ \column{.4\textwidth}
+ \center{
+  \includegraphics[width=0.5\textwidth]{pics-1/LTER_logo.png} \\
+  }
+  \hfill \\
+   \textcolor{white}{5. Big Data from Large Networks} 
+   
+\end{columns}
 \end{frame}
 
-\begin{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
+\begin{columns}
+ \column{.6\textwidth}
+  \includegraphics[height=\textheight]{pics-1/sem.jpg}
+  
+ \column{.4\textwidth}
 
-Link Scientific Understanding of a Complex World to Statistical Models
+  \hfill \\
+   \textcolor{white}{6. Link Scientific Understanding of a Complex World to Statistical Models} 
+   
+\end{columns}
 \end{frame}
 
 
 \endgroup
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center{
+ \begin{huge}Questions? \end{huge} 
+}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%% Who Are You?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
 \center{
  \begin{huge}Who Are You?\end{huge}
@@ -175,8 +303,552 @@ Link Scientific Understanding of a Complex World to Statistical Models
 }
 \end{frame}
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%% Who Are You?
+%%%%%%%%%%%%%% My Philosophy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\begin{center}\huge{Our Approach to Data Analysis} \\
+\hfill \\
+\small Data from Reusch et al. 2005 PNAS
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Start with a Question}
+\center{
+
+ \begin{overpic}[width=0.8\paperwidth]%
+   {pics-1/seagrass.jpeg}
+   \put(1,1){\textcolor{white}{\tiny Jessica Abbot}}
+  \end{overpic}
+
+Does seagrass genetic diversity increase productivity?
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Build an Understanding of the System}
+
+\begin{enumerate}
+  \item{Literature}
+  \item{Observation}
+  \item{Natural History}
+\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center{
+\frametitle{Construct a Model of the System}
+\includegraphics[width=0.7\textwidth]<1-2>{pics-1/grass1.jpg}
+\includegraphics[width=0.7\textwidth]<3-4>{pics-1/grass2.jpg}
+\includegraphics[width=0.7\textwidth]<5->{pics-1/grass3.jpg}
+
+\visible<2->{\Large{Causal Graph}}
+
+}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Collect the Data to Best Estimate \& Test the Model}
+\center{
+
+\includegraphics[width=0.7\textwidth]{pics-1/grass1.jpg}\\
+\begin{columns}
+ \column{.3\textwidth}
+ \begin{mdframed}[backgroundcolor=green]\center{1 \\ genotype}\end{mdframed}
+ \column{.3\textwidth}
+ \begin{mdframed}[backgroundcolor=green]\center{3 genotypes}\end{mdframed}
+
+\column{.3\textwidth}
+ \begin{mdframed}[backgroundcolor=green]\center{6 genotypes}\end{mdframed}
+
+\end{columns}
+
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Look at Your Data}
+
+<<genotypes2, echo=FALSE, out.width='0.5\\textwidth', out.height='0.5\\textwidth', fig.align='center',fig.width=3, fig.height=3>>=
+qplot(treatment.genotypes, shoots, data=eelgrass, geom="point")+
+  geom_point(size=2) +
+  xlab("# of genotypes") + 
+  ylab("# of eelgrass shoots") +
+  theme_bw()
+@
+\pause
+\center{Fit a model(s), chosen to suit this data}
+\end{frame}
+
+\begin{frame}
+\frametitle{Analysis!}
+
+<<genotypes3, echo=FALSE, out.width='0.5\\textwidth', out.height='0.5\\textwidth', fig.align='center',fig.width=3, fig.height=3>>=
+qplot(treatment.genotypes, shoots, data=eelgrass, geom="point")+
+  geom_point(size=2) +
+  xlab("# of genotypes") + 
+  ylab("# of eelgrass shoots") +
+  theme_bw() +
+  stat_smooth(method="glm", family=poisson(link="log"), colour="red", lwd=2)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Build Open Reproducible Research}
+
+Many Methods of Sharing Data, Methods, and Results Beyond Publication
+\hfill \\
+
+\begin{enumerate}
+  \item GitHub - public code repository
+  \item FigShare - share key figures, get a doi
+  \item Blog - open 'notebook' 
+  \item Dryad or Other Repository - post-publication data sharing
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center{
+ \begin{huge}Questions? \end{huge} 
+}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% How this Course will Work
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Lecture/Lab/Labinar?}
+
+\begin{itemize}
+  \item{I will yammer on}
+  \pause
+  
+  \item{R lab will be part of class}
+  \pause
+  
+  \item{Notes available at \url{http://jarrettbyrnes.info/biol697}}
+  \pause
+  
+  \item{Slide source available at \url{http://github.com/jebyrnes/biol697}}
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Special Topics}
+\center{Additional special topics mini-labinars, e.g. knitr \& LaTeX}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Readings for Class}
+\begin{columns}
+  \column{0.5\textwidth}
+  \includegraphics[width=1\textwidth]{pics-1/whitlockSchluter.jpeg}
+  
+  \column{0.5\textwidth}
+  Whitlock, W.C. and Schluter, D. (2008) The Analysis of Biological Data. Roberts and Company Publishers.\\
+  \hfill\\
+  \url{http://www.zoology.ubc.ca/~whitlock/ABD/teaching/index.html}
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Readings for Class}
+\begin{columns}
+  \column{0.5\textwidth}
+  \includegraphics[width=1\textwidth]{pics-1/rnutshell.jpeg}
+  
+  \column{0.5\textwidth}
+  Adler, J. (2009) R in a Nutshell: A Desktop Quick Reference. O'Reilly.\\
+\end{columns}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Reflections}
+\begin{columns}
+  \column{0.5\textwidth}
+  \includegraphics[width=1\textwidth]{pics-1/vickers.jpeg}
+  
+  \column{0.5\textwidth}
+  Media. Vickers, A. (2009) What is a p-value anyway? 34 Stories to Help You Actually Understand Statistics. Addison Wesley.\\
+  \hfill\\
+  Write a weekly reflection.  1 page. Graded for participation (10\%).\\
+  1 entry posted per week for discussion.
+  \url{http://learningdata.wordpress.com/}
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Problem Sets}
+
+\begin{itemize}
+  \item{40\% of your grade}
+  \item{Adapted from Whitlock and Schluter}
+  \item{Will often require R}
+  \item{Turn in all code, and it must be understandable}
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Practical Exams}
+
+\begin{itemize}
+  \item{20\% Midterm, 30\% final}
+  \item{Real world data analysis problems}
+  \item{Will require R}
+  \item{Turn in all code, and it must be understandable}
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Extra Credit: Your Work}
+
+
+\begin{itemize}
+  \item{10\% Extra}
+  \item{Report on your own data}
+  \item{Cogently present what you did, why you did it, and the results \& interpretation}
+  \item{Data \& Code must be accessible \& understandable}
+  \item{Extra points for putting work online so others can use \& view your work}
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Topics}
+\begin{enumerate}
+  \item{Data \& Data Management}\pause
+  \item{Biological Processes \& Statistical Distributions}\pause
+  \item{Data Visualization}\pause
+  \item{Simulation \& Basic Hypothesis Testing}\pause
+  \item{Sampling Design}\pause
+  \item{Fitting Linear Models: Least Squares}\pause
+  \item{Fitting Linear Models: Likelihood}\pause
+  \item{Generalized Linear Models}\pause
+  \item{Experiments \& the Linear Model (ANOVA)}\pause
+  \item{Multiple Continuous Predictors}\pause
+  \item{What should I sample? Simpson's Paradox}\pause
+  \item{Interactions \& Nonlinearities}\pause
+  \item{Bootstrapping}\pause
+  \item{Model Comparison}
+\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center{
+ \begin{huge}Questions? \end{huge} 
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% R
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{What is R?}
+\begin{quote}\small{
+R is an integrated suite of software facilities for data manipulation, calculation and graphical display. It includes
+\begin{itemize}
+    \item an effective data handling and storage facility,
+  \item a suite of operators for calculations on arrays, in particular matrices,
+  \item a large, coherent, integrated collection of intermediate tools for data analysis,
+graphical facilities for data analysis and display either on-screen or on hardcopy, and
+  \item a well-developed, simple and effective programming language which includes conditionals, loops, user-defined recursive functions and input and output facilities.
+
+\end{itemize}
+}
+\end{quote}
+\small{From http://r-project.org}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{What is R?}
+\begin{itemize}
+    \item A programming language uniquely developed for statistical analysis
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Why R?}
+
+\begin{enumerate}
+  \item{Free}\pause
+  \item{Huge growing community}\pause
+  \item{Packages to do almost anything}\pause
+  \item{Makes reusable research easy}\pause
+  \item{C-based language}\pause
+  \item{Syntax naturally matches analytical thinking}
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{What is R Studio?}
+\center{
+
+ \includegraphics[width=0.6\textwidth]{pics-1/rstudio-windows.png}
+
+ \begin{itemize}
+  \item{Cross-Platform Graphical User Interface for R}
+  \item{It is not R}
+ \end{itemize}
+
+}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Let's Fire It Up!}
+
+\center{\large{Open R-Studio.\\ \hfill \\Don't have it?  Download it from \url{http://rstudio.org}}}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{What do you see?}
+ \begin{overpic}[width=0.8\paperwidth]%
+   {pics-1/blank_rstudio.jpg}
+   \pause
+    \put(15,45){ \colorbox{white}{\large code editor}  }
+
+
+  \pause
+  \put(15,25){\colorbox{white}{\large console} }
+
+  \pause
+  \put(65,45){\colorbox{white}{\large workspace} }
+
+  \pause
+  \put(65,25){\colorbox{white}{\large misc tabs} }
+
+
+  \end{overpic}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Console and Math}
+
+<<math1>>=
+1+1
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Console and Math}
+code
+
+<<objCode1>>=
+a.number<-1+1
+@
+\pause
+
+<<objCode2>>=
+a.number
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Note: Comment Your Code as You Write with \#}
+
+The text after \# is not evaluated.  
+<<commentCode>>=
+#This is going to be the number two
+a.number<-1+1
+@
+
+\pause
+<<commentCode2>>=
+#####----------
+
+# You can get creative with comments to separate code blocks
+# And write a lot, which is good practice
+
+#####----------
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Functions Work on Objects}
+code
+
+<<funcCode>>=
+sin(a.number)
+@
+
+\pause
+How to get help for a function
+<<helpCode, eval=FALSE>>=
+?cos
+
+help(cos)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Lots of Object Types - like Data!}
+code
+
+<<dataCode>>=
+head(cars, n=3) #note the n= argument!
+@
+
+\pause
+Try looking at all of cars
+\hfill \\
+
+\pause
+Can be lots of information stored in an object
+<<dataCode2>>=
+names(cars)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Graphics are a Snap}
+
+<<plotCode, out.width='0.47\\textwidth',  fig.align='center', fig.width=4, fig.height=4>>=
+plot(speed ~ dist, data=cars)
+@
+
+\pause
+Look at ?plot to see other arguments to change appearance
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Installing Packages}
+
+  \includegraphics[width=\textwidth]{pics-1/packages1.jpg}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Installing Packages}
+
+  \includegraphics[width=\textwidth]{pics-1/packages2.jpg}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Installing Packages}
+
+You can also install packages from the command line.
+
+<<pkg-install, eval=FALSE>>=
+install.packages('ggplot2', repos='http://cran.case.edu/', dependencies=TRUE)
+@
+
+Using one of the above methods, install the package ggplot2 and its dependencies now.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Using a Package}
+
+<<qplotCode, out.width='0.47\\textwidth',  fig.align='center', fig.width=4, fig.height=4>>=
+library(ggplot2)
+
+qplot(dist, speed, data=cars)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{You Try It}
+
+\begin{itemize}
+  \item Load ggplot2 and look at the mtcars data set
+  \item Look at the qplot help file \& demos
+  \item Make two plots 
+\end{itemize}
+
+<<qplotcode2, out.width='0.47\\textwidth',  fig.align='center', fig.width=4, fig.height=4, echo=FALSE>>=
+library(ggplot2)
+
+qplot(factor(cyl), mpg, data=mtcars, geom="boxplot")
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center{
+ \begin{huge}Questions? \end{huge} 
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Fin
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Next time}
+
+\begin{itemize}
+  \item Data Management!
+  \item Contact me if you are not enrolled 
+  \item Read Chapter 1 of the Nutshell
+  \item Read P-Values Chapters 1, 32-34 \& Ponder
+ 
+\end{itemize}
+
+\end{frame}
+
 
 \end{document}
