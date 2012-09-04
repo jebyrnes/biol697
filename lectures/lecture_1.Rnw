@@ -1,4 +1,12 @@
 \documentclass{beamer}
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 1 - Introduction for Biol697
+%%%
+%%% Last Modified 9/4/2012
+%%%
+%%% Changelog:
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
 
     %%%for handouts
     %\usepackage{pgfpages}
