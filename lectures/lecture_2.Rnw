@@ -1,0 +1,220 @@
+\documentclass{beamer}
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 2 - Data Screening in R
+%%%   Slides for just the R portion
+%%%
+%%% Last Modified 9/6/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%for handouts
+    %\usepackage{pgfpages}
+    %\pgfpagesuselayout{4 on 1}
+    %\pgfpageslogicalpageoptions{1}{border code=\pgfusepath{stroke}}
+    %\pgfpageslogicalpageoptions{2}{border code=\pgfusepath{stroke}}
+    %\pgfpageslogicalpageoptions{3}{border code=\pgfusepath{stroke}}
+    %\pgfpageslogicalpageoptions{4}{border code=\pgfusepath{stroke}}
+
+    %%%appearance
+    \usetheme{Montpellier}
+    \usecolortheme{beaver}
+    \usefonttheme{professionalfonts}
+
+    %%%useful packages for effects
+    \usepackage{overpic}
+    \usepackage{lmodern}
+    \usepackage{mdframed}
+
+    \usepackage{hyperref} %must be last
+
+\author{Jarrett  Byrnes}
+
+%%set font sizes correctly for code
+<<setup, include=FALSE>>=
+# smaller font size for chunks
+opts_chunk$set(size = 'footnotesize')
+options(width = 60)
+@
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Loading Data}
+<<readData>>=
+
+westNile <- read.csv("./data/SwaddleWestNile2002NCEAS-BAD.csv")
+
+@
+ \pause
+ Note:
+ \begin{itemize}
+  \item File path (./ is this directory, ../ is back one directory)
+  \item Quotes
+  \item Our data is now an object in R
+ \end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Look at Your Data}
+<<headData>>=
+head(westNile)
+
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Look at Columns 3 through 4}
+<<headData2>>=
+head(westNile[,3:4])
+
+@
+\pause
+
+ \begin{itemize}
+  \item Data Frame is treates as a Matrix.
+  \item $[rows, columns$]
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Look at Your Individual Columns}
+<<namesData>>=
+names(westNile)
+@
+\pause
+(Note that spaces are now .s)
+
+\pause
+<<columData>>=
+westNile$Species.Richness
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Missing Data is NA}
+
+<<columData2>>=
+westNile$Species.Richness
+@
+
+Note the NA.  This is missing data.
+\pause
+<<columData3>>=
+westNile$Species.Richness[6]
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Let's look at another}
+<<corvids>>=
+westNile$Corvid.Abundance
+
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Cleaner Data}
+<<cleanData>>=
+westNile <- read.csv("./data/SwaddleWestNile2002NCEAS-BAD.csv", na.strings="NOT AVAILABLE")
+
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{And, Fixed!}
+<<corvids2>>=
+westNile$Corvid.Abundance
+
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What about fixing many bad values?}
+
+<<corvidsGraph, out.width="0.55\\textwidth", out.height="0.55\\textwidth", fig.width=3, fig.height=3, fig.align="center">>=
+plot(westNile$Corvid.Abundance)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What about fixing many bad values?}
+<<corvids3>>=
+which(westNile$Corvid.Abundance==9999)
+@
+
+\pause
+ == is makes a COMPARISON and returns a logical value\\
+ Can also use \textless, \textgreater, and more.
+
+\pause
+<<corvids4>>=
+westNile$Corvid.Abundance==9999
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Replace the 9999s}
+<<corvids5>>=
+westNile$Corvid.Abundance[which(westNile$Corvid.Abundance==9999)]<-NA
+@
+
+The which approach is often good, as once you spot a single problem observation, there may be others like it.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise}
+\Large{
+ \begin{enumerate}
+  \item Is everything OK with West Nile Virus Incidence?
+  \hfill \\
+  \hfill \\
+  \pause
+  
+  \item Let's say a database overwrote some 0 values - fix these values!
+  
+ \end{enumerate}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Fix}
+<<WNV, out.width="0.5\\textwidth", out.height="0.5\\textwidth", fig.width=3, fig.height=3, fig.align="center", tidy=TRUE>>=
+plot(westNile$WNV.incidence)
+@
+
+
+<<WNV4>>=
+westNile$WNV.incidence[which(westNile$WNV.incidence < 0)] <- 0
+@
+
+
+\end{frame}
+
+\end{document}
