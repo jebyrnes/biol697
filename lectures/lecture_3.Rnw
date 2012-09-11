@@ -1,0 +1,559 @@
+\documentclass{beamer}
+%\input{handoutPreamble.Rnw}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 3 - Sampling populations
+%%%   
+%%%
+%%% Last Modified 9/7/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+
+\input{slidePreamble.Rnw}
+
+<<set-rDisplay, echo=FALSE, cache=FALSE>>=
+source("./beamerPrep.R")
+@
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE>>=
+read_chunk("../homework/homework_1_solution.R")
+read_chunk("./lecture_3.R")
+library(ggplot2)
+@
+<<lecture3prep, echo=FALSE, cache=FALSE>>=
+@
+\begin{document}
+
+%%%%%%%%------------------------
+%%% Review of Extra Credit
+%%% and introduction to factors
+%%%%%%%%------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Quick Review of Last Week's Computational Concepts}
+
+ \begin{itemize}
+  \item Objects 
+  \item Functions manipulating objects
+  \item Data frames
+  \item Vectors
+  \item Numeric, Character, Boolean, and Factor objects...
+ \end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Extra Credit}
+
+Goal: change all of the "EE" entries in the ponds data to "E"
+\hfill \\
+So, after last class, you may try to do this:
+<<homework1_2a-1, echo=FALSE>>=
+@
+<<homework1_2d-1>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is a factor?}
+<<reloadHW1Data, echo=FALSE>>=
+@
+
+<<factorIntro>>=
+ponds$site[1:20]
+@
+\pause
+\begin{itemize}
+  \item A factor is made up of text strings
+  \item A factor has levels
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Numerics, Characters, and Factors}
+
+<<numericVector>>=
+#a numeric vector
+c(1,2,3)
+@
+\pause
+<<characterVector>>=
+#a character vector
+c("1", "2", "3")
+@
+\pause
+<<factorVector>>=
+#a character vector -> factor
+factor(c("1", "2", "3"))
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{From Factors to Characters and Back}
+
+%basic solution
+<<homework1_2d-2>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Or Just Change Factor Levels...}
+
+%reload data as we have changed the site column
+<<homework1_2a-1, echo=FALSE>>=
+@
+
+%just change the levels
+<<homework1_2d-3>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{A More Foolproof Level Change...}
+
+
+%reload data as we have changed the site column
+<<homework1_2a-1, echo=FALSE>>=
+@
+
+%more elegant solution
+<<homework1_2d-4>>=
+@
+\hfill \\
+You could use which
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Exercise}
+
+ \begin{itemize}
+  \item Create a factor vector of the letters A thorugh D  that repeats 10 times (use rep)
+  \hfill \\
+  \item Do the same thing, but with the strings A1, B1, ...D1
+  \hfill \\
+  \item Merge these two into a single vector.
+ \end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise}
+
+<<homework1_exercise>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+
+  \Huge \begin{center}{Questions?} \end{center}
+\end{frame}
+
+
+
+%%%%%%%%------------------------
+%%% Sampling Populations
+%%%%%%%%------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+
+  \Huge \begin{center}{Sampling Populations} \end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{What is a population?}
+<<population, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+Population = All Individuals
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{What is a sample?}
+<<sample, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+A {\bf sample} of individuals in a randomly distributed population.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{How can sampling a population go awry?}
+\large{
+ \begin{itemize}
+   \item Sample is not {\bf representative}
+    \item Replicates do not have {\bf equal chance} of being sampled
+   \item Replicates are not is not {\bf independent}
+  \end{itemize}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Bias from Unequal Representation}
+<<colorSize, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+If you only chose one color, you would only get one range of sizes.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Bias from Unequal Change of Sampling}
+<<spatialBias, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+\pause
+Spatial gradient in size
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Bias from Unequal Change of Sampling}
+<<spatialSample, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+Oh, I'll just grab those individuals closest to me...
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Solution: {\bf Stratified} Sampling}
+<<stratified, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+Sample over a known gradient, aka {\bf cluster sampling} \\
+Can incorporate multiple gradients
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Solution: Random Sampling}
+<<spatialSample2, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+\pause
+Two sampling schemes:
+ \begin{itemize}
+  \item {\bf Random} - samples chosen using random numbers
+  \item {\bf Haphazard} - samples chosen without any system (careful!)
+ \end{itemize}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Non-Independence \& Haphazard Sampling}
+<<samplePath, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+\pause
+What if there are interactions between individuals?
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Solution: Chose Samples Randomly}
+<<samplePath2, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+Path chosen with random number generator
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Deciding Sampling Design}
+What influences the measurement you are interested in?\\
+\hfill \\
+
+\begin{figure}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
+  thick,main node/.style={rectangle,fill=white,draw,font=\sffamily\Large\bfseries}]
+          
+  \node[main node] (1) [left] {\Large Location};
+  \node[main node] (2) [right of=1] {Size};          
+  
+
+  \path[every node/.style={}]
+  (1) edge node [left] {} (2) ;    
+  
+\end{tikzpicture}
+\end{figure}
+
+\pause
+\begin{center} Causal Graph \end{center}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Stratified or Random?}
+Do you know all of the influences?\\
+\hfill \\
+
+\begin{figure}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
+  thick,main node/.style={rectangle,fill=white,draw,font=\sffamily\Large\bfseries}]
+          
+  \node[main node] (1) [left] {\Large Location};
+  \node[main node] (2) [right of=1] {Size};          
+  \node[main node] (3) [right of=2] {Color};          
+  
+
+  \path[every node/.style={}]
+  (1) edge node [left] {} (2)     
+  (3) edge node [right] {} (2) ;    
+  
+\end{tikzpicture}
+\end{figure}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Stratified or Random?}
+Do you know all of the influences?\\
+\hfill \\
+
+\begin{figure}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
+  thick,main node/.style={rectangle,fill=white,draw,font=\sffamily\Large\bfseries}]
+          
+  \node[main node] (1) [left] {\Large Location};
+  \node[main node] (2) [right of=1] {Size};          
+  \node[main node] (3) [right of=2] {Color};          
+  \node[main node] (4) [above of=2] {???};          
+  
+
+  \path[every node/.style={}]
+  (1) edge node [left] {} (2)     
+  (4) edge node [below] {} (2)     
+  (3) edge node [right] {} (2) ;    
+  
+\end{tikzpicture}
+\hfill \\
+\pause
+You can represent this as an equation:\\
+Size = Color + Location + ???
+
+\end{figure}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Stratified or Random?}
+ \begin{itemize}
+  \item How is your population defined?
+  \item What is the scale of your inference?
+  \item What might influence the inclusion of a replicate?
+  \item How important are external factors you know about?
+  \item How important are external factors you cannot assess?
+ \end{itemize}
+    
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Exercise}
+  \large{Draw a causal graph of the influences on one thing you measure}\\
+  \hfill \\
+  \large{How would you sample your population?}
+\end{frame}
+
+
+%%%%%%%%------------------------
+%%% Describing Your Sample
+%%%%%%%%------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+
+  \Huge \begin{center}{Describing a Sample} \end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Mean}
+<<sample, out.width="0.5\\textwidth", out.height="0.5\\textwidth", echo=FALSE, fig.align='center',fig.width=6, fig.height=6>>=
+@
+
+\center What is the mean size of individuals in this population?
+\center \large {$\bar{Y }= \frac{ \sum{y_{i}} }{n}$}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Mean}
+\begin{center} 
+  \huge{ $\bar{Y} = \frac{ \displaystyle \sum_{i=1}^{n}{y_{i}} }{n}$}
+\end{center}
+
+$\bar{Y}$ - The average value of a sample\\
+$x_{i}$ - The value of a measurement for a single individual \\
+n - The number of individuals in a sample\\
+\hfill \\
+\pause 
+$\mu$ - The average value of a population \\
+\pause
+(Greek = population, Latin = Sample)
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{R: Sample Size and Estimate Precision}
+\hfill \\
+\emph{As n increases, does your estimate get closer to the true mean?}\\
+\hfill \\
+
+1. Taking a mean
+<<mean1>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{R: Sample Size and Estimate Precision}
+\hfill \\
+\emph{As n increases, does your estimate get closer to the true mean?}\\
+\hfill \\
+
+2. Mean from a random population
+<<mean2>>=
+@
+
+\emph{runif} draws from a Uniform distribution
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{R: Sample Size and Estimate Precision}
+\hfill \\
+\emph{As n increases, does your estimate get closer to the true mean?}\\
+\hfill \\
+
+3. Sampling from a simulated population
+<<mean3>>=
+@
+
+\pause
+\emph{set.seed} ensures that you get the same random number every time\\
+\emph{sample} draws a sample of a defined size from a vector
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Sample Size and Estimate Precision}
+\hfill \\
+\emph{As n increases, does your estimate get closer to the true mean?}\\
+\hfill \\
+
+\begin{enumerate}
+  \item Use runif (or rnorm, if you're feeling saucy) to simulate a population
+  \item How does the repeatability of the mean change as you change the sample size?
+\end{enumerate}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Sample Size and Estimate Precision}
+\hfill \\
+\emph{As n increases, does your estimate get closer to the true mean?}\\
+
+<<exerciseMean1>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Sample Size and Estimate Precision}
+\hfill \\
+\emph{As n increases, does your estimate get closer to the true mean?}\\
+
+<<exerciseMean2>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Variance}
+How variable was that population?
+
+\begin{center} \large $s^2=  \frac{\displaystyle \sum_{i=1}^{n}{(Y_i - \bar{Y})^2}} {n-1}$\\
+\end{center}
+\hfill \\
+ \begin{itemize}
+  \item \textbf{Sums of Squares} over n-1 \\
+  \item n-1 corrects for both sample size and sample bias\\
+  \item $\sigma^2$ if describing the population
+  \item Units in square of measurement...
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Standard Deviation}
+\center \large $s = \sqrt{s^2}$
+
+\begin{itemize}
+  \item Units the same as the measurement
+  \item If distribution is normal, 67\% of data within 1 SD, 95\% within 2
+  \item $\sigma$ if describing the population
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Sample Size and Estimated Sample Variation}
+
+ \begin{enumerate}
+  \item Repeat the last exercise, but with the functions sd or var
+  \item Do you need as many samples for a precise estimate as for the mean?
+ \end{enumerate}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Next time...}
+<<bootPreview, out.width="0.9\\textwidth", out.height="0.7\\textwidth", echo=FALSE, fig.align='center'>>=
+@
+\end{frame}
+
+
+\end{document}

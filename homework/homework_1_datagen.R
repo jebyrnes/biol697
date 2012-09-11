@@ -18,7 +18,7 @@ n<-500
 
 #it all starts with chlorophyll and turbidity
 waterClarity<-data.frame(
-  site = rep(c('A', 'B', 'C', 'D', 'E'), 100),
+  site = rep(c('A', 'B', 'C', 'D', 'EE'), 100),
   turbidity = runif(n, 3,10),
   chlA = runif(n, 0, 5)
   
@@ -50,10 +50,7 @@ waterClarity[idx3,4]<- waterClarity[idx3,4]*1000
 
 
 #bad site labels
-eIDX<-which(waterClarity[,1]=="E")
-idx4<-eIDX[round(runif(10,1,length(eIDX)))]
-
-waterClarity[,1]<-as.character(waterClarity[,1])
-waterClarity[idx4,1]<-"EE"
+#eIDX<-which(waterClarity[,1]=="E")
+#idx4<-eIDX[round(runif(7,1,length(eIDX)))]
 
 write.table(waterClarity, file="./ponds.txt", sep=" ", row.names=F)

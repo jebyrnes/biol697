@@ -1,0 +1,24 @@
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Formatting for BIOL697 Beamer slides
+%%%   By using this file, I won't have to have a long preamble at
+%%%    the top of every file for the slides
+%%%
+%%% Last Modified 9/6/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%appearance
+    \usetheme{Montpellier}
+    \usecolortheme{beaver}
+    \usefonttheme{professionalfonts}
+
+    %%%useful packages for effects
+    \usepackage{overpic}
+    \usepackage{lmodern}
+    \usepackage{mdframed}
+
+    \usepackage{hyperref} %must be last
+
+\author{Jarrett  Byrnes}

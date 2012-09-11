@@ -1,4 +1,10 @@
 \documentclass{beamer}
+
+\input{slidePreamble.Rnw}
+<<set-rDisplay, echo=FALSE, cache=FALSE>>=
+read_chunk("./beamerPrep.R")
+@
+
 %%%%%%%%%%%%%%%%%%%%%%%%
 %%% Lecture 2 - Data Screening in R
 %%%   Slides for just the R portion
@@ -9,27 +15,6 @@
 %%% 
 %%%%%%%%%%%%%%%%%%%%%%%%
 
-    %%%for handouts
-    %\usepackage{pgfpages}
-    %\pgfpagesuselayout{4 on 1}
-    %\pgfpageslogicalpageoptions{1}{border code=\pgfusepath{stroke}}
-    %\pgfpageslogicalpageoptions{2}{border code=\pgfusepath{stroke}}
-    %\pgfpageslogicalpageoptions{3}{border code=\pgfusepath{stroke}}
-    %\pgfpageslogicalpageoptions{4}{border code=\pgfusepath{stroke}}
-
-    %%%appearance
-    \usetheme{Montpellier}
-    \usecolortheme{beaver}
-    \usefonttheme{professionalfonts}
-
-    %%%useful packages for effects
-    \usepackage{overpic}
-    \usepackage{lmodern}
-    \usepackage{mdframed}
-
-    \usepackage{hyperref} %must be last
-
-\author{Jarrett  Byrnes}
 
 %%set font sizes correctly for code
 <<setup, include=FALSE>>=
