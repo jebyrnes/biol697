@@ -1,0 +1,445 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 4 - Estimating Population Properties
+%%%   
+%%%
+%%% Last Modified 9/7/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE>>=
+source("./beamerPrep.R")
+read_chunk("./lecture_4.R")
+@
+<<lecture4prep, echo=FALSE, cache=FALSE>>=
+@
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+
+  \Huge \begin{center}{Sample Properties \& Simulation} \end{center}
+<<lecture4-title, out.height="0.6\\textheight",out.width="1\\textheight", echo=FALSE, fig.align='center', fig.height=6, fig.width=10>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{But first, a gratuitous advertisement}
+\begin{center}  
+  \includegraphics[width=0.4\textwidth]{./pics-4/SciFundLogo.jpg}\\
+\url{http://scifundchallenge.org}
+\end{center}
+What is \#SciFund?
+\begin{itemize}
+ \item{Crowdfunding your research (avg project ~\$1500)}
+ \item{An opportunity to try your hand at \emph{outreach}}
+ \item{Training in video and communication} 
+ \item{Signup by Oct. 8th}
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Loops: Simulation to Estimate Precision}
+Last time...\\
+How does sample size influence precision of our estimate of the mean?\\
+<<bootMean, out.width="0.55\\textwidth", out.height="0.55\\textwidth", echo=FALSE, fig.align='center', fig.height=4, fig.width=4>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The anatomy of a simulation}
+1) Create a vector of sample sizes you want to iterate over
+<<bootMean1, eval=FALSE, size="large">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The anatomy of a simulation}
+2) Create a blank vector of means
+<<bootMean2, eval=FALSE, size="large">>=
+@
+\hfill \\
+\emph{length} gets length of a vector
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The anatomy of a simulation}
+3) The For Loop
+<<bootMean3, eval=FALSE, size="normalsize">>=
+@
+\pause
+ \begin{itemize}
+  \item{i is an index to iterate over}
+  \pause
+  \item{the  values of i are from the vector \emph{1:length(n)}}
+
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The anatomy of a simulation}
+4) Plot it
+
+<<bootMean4, out.width="0.45\\textwidth", out.height="0.45\\textwidth", fig.align='center', fig.height=4, fig.width=4>>=
+@
+Precision plateaus around ~50.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise}
+
+ \begin{itemize}
+  \item Write a for loop that calculates the first 15 numbers of the fibonacci sequence
+ \end{itemize}
+ \emph{1, 1, 2, 3, 5, 7, 9...}
+ \hfill \\
+  \small{(Challenge: do it with a starting vector of only NA's )}
+  
+ \hfill \\
+ \hfill \\
+ \pause
+  \small{(hint - create a blank vector, but with the first two entries as 1)}\\
+   \pause
+  \small{(hint - aVec[i+1] is aVec[2] if i=1)}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise}
+<<fib>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Variance}
+How variable was that population?
+
+\begin{center} \large $s^2=  \frac{\displaystyle \sum_{i=1}^{n}{(Y_i - \bar{Y})^2}} {n-1}$\\
+\end{center}
+\hfill \\
+ \begin{itemize}
+  \item \textbf{Sums of Squares} over n-1 \\
+  \item n-1 corrects for both sample size and sample bias\\
+  \item $\sigma^2$ if describing the population
+  \item Units in square of measurement...
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Standard Deviation}
+\center \large $s = \sqrt{s^2}$
+
+\begin{itemize}
+  \item Units the same as the measurement
+  \item If distribution is normal, 67\% of data within 1 SD
+  \item 95\% within 2 SD
+  \item $\sigma$ if describing the population
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Skew}
+<<skew, out.width="0.5\\textwidth", out.height="0.5\\textwidth", fig.align='center', echo=FALSE>>=
+@
+\pause
+\textcolor{red}{Right-Skewed} \\
+\pause
+Skew calculated using additional moments (think sums of squares, but cubed)
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Kurtosis}
+<<kurtosis, out.width="0.5\\textwidth", out.height="0.5\\textwidth", fig.align='center', echo=FALSE>>=
+@
+\textcolor{red}{Platukurtic} \\
+\pause
+\textcolor{blue}{Leptokurtic}  \\
+\pause
+\textcolor{black}{Normal}  \\
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Sample Properties: Mode}
+<<load-bird, echo=FALSE>>=
+@
+<<mode, out.width="0.5\\textwidth", out.height="0.5\\textwidth", fig.align='center', echo=FALSE, fig.height=5, fig.width=5>>=
+@
+This highest point on a frequency plot.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Sample Properties: Median}
+
+<<median, out.width="0.5\\textwidth", out.height="0.5\\textwidth", fig.align='center', echo=FALSE, fig.height=5, fig.width=5>>=
+@
+This middle value of a dataset.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Sample Properties: Median}
+We obtain the median by sorting and picking the middle value.
+
+<<median2>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Sample Properties: Median}
+The midpoint of the data-set is the 50th percentile!
+
+<<median, out.width="0.5\\textwidth", out.height="0.5\\textwidth", fig.align='center', echo=FALSE, fig.height=5, fig.width=5>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Percentiles, Quantiles, Quartiles, and all that}
+
+\begin{enumerate}
+ \item Sort a data set
+ \item The index of the \emph{ith} value minus 0.5 divided by n is its quantile
+ \item Quantile * 100 is the percentile
+ \item Quartiles are those points that divide data into 4 equal chunks (25th, 50th, and 75th percentile)
+\end{enumerate}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Percentiles, Quantiles, Quartiles, and all that}
+
+<<quantiles>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Boxplots to Represent Quartile Information}
+
+<<quartiles, out.width="0.5\\textwidth", out.height="0.5\\textwidth", fig.align='center', fig.height=4, fig.width=4>>=
+@
+Whiskers show 1.5 * interquartile range, Points show outliers
+\end{frame}
+
+
+%%%%%%%%------------------------
+%%% Variation in Estimates
+%%%%%%%%------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+
+  \Huge \begin{center}{Variation in Sample Estimates} \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Remember Samples and Populations?}
+How representative of our population are the estimates from our sample?
+<<sample, out.width="0.65\\textwidth", out.height="0.65\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Remember Samples and Populations?}
+We've seen that we get variation in point estimates at any sample size
+<<bootMean, out.width="0.65\\textwidth", out.height="0.65\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
+@
+\begin{center}What does that variation look like?\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Variation in Estimation}
+ \begin{itemize}
+  \item Consider a population with some distribution (rnorm, runif, rgamma)
+  \pause
+  \item Think of the mean of one sample as an individual replicate
+  \pause
+  \item Take many (50) `replicates' from this population of means
+  \pause
+  \item What does the distribution of means look like? Use \emph{hist}
+  \pause
+  \item How does it depend on sample size (within replicates) or distribution type?
+ \end{itemize}
+ \pause
+ \hfill \\
+ Extra: Show the change in distributions with sample size in one figure.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Central Limit Theorem}
+\begin{center}The distribution of means converges on normality\end{center}
+
+<<CLT-unif-lab, echo=FALSE>>=
+@
+<<CLT-unif-lab-plot, out.width="0.6\\textwidth", out.height="0.6\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Central Limit Theorem Simulation}
+
+<<CLT-unif-lab-single, eval=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Estimating Variation Around a Mean}
+Great, so, if we can draw many replicated means from a larger population, we can the standard deviation of an estimate!  \\
+\pause
+\hfill \\
+This standard deviation of the estimate of the mean is the \bf{Standard Error}.\\
+\pause
+\hfill \\
+But for a single study, we only have one sample...\\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{A Bootstrap Simulation Approach to Standard Error}
+\begin{itemize}
+  \item Our sample is representative of the entire population
+  \item Therefore, we can resample it \emph{with replacement} for 1 simulated sample
+  \item We use our sample size as the new sample size as well
+\end{itemize}
+\hfill \\
+\hfill \\
+We set the replace argument in sample = TRUE \\ Try sampling from the bird data with replacement.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{A Bootstrap Simulation Approach to Standard Error}
+
+<<birds-sample>>=
+@
+<<birds-sample>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Standard Error}
+\huge{$$SE_{\bar{Y}} = \frac{s}{\sqrt{n}}$$}
+$\bar{Y}$ - sample mean\\
+s - sample standard deviation\\
+n - sample size\\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{95\% Confidence Interval and SE}
+\begin{itemize}
+  \item Recall that 95\% of the data in a sample is within 2SD of its mean
+  \pause
+  \item So, 95\% of the times we sample a population, the \emph{true} mean will lie within 2SE of our estimated mean
+  \pause
+  \item This is the 95\% \bf{Confidence Interval}
+\end{itemize}
+
+$$\bar{Y}-2SE \le \mu \le \bar{Y}+2SE$$
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Exercise: 95\% Confidence Interval}
+
+$$\bar{Y}-2SE \le \mu \le \bar{Y}+2SE$$
+\begin{itemize}
+  \item Draw 20 simulated samples  with n=10 from a normal distribution of mean 0
+  \pause
+  \item Calculate the upper and lower confidence interval for each
+  \pause
+  \item Compare the 95\% CIs to the true value of the mean
+  \pause
+  \item Extra: graph it with segments
+\end{itemize}
+\hfill \\
+Tip: To bind two vectors together as columns, use \emph{cbind}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: 95\% Confidence Interval}
+<<CI>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: 95\% Confidence Interval}
+<<CIShow>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: 95\% Confidence Interval}
+<<CIPlot, out.width="0.6\\textwidth", out.height="0.6\\textwidth", fig.align='center', echo=FALSE, fig.width=8, fig.height=8>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Variation in Other Estimates}
+\large{
+
+\begin{itemize}
+
+ \item Many SEs and CIs of estimates have formulae and well understood properties
+ \pause
+ \item For those that do not, we can bootstrap the SE of any estimate - e.g., the median
+ \pause
+ \item Bootstrapped estimates (mean of simulated replicates) can be used to assess bias
+ \pause
+ \item Bootstrapping is not a panacea - requires a good sample size to start
+\end{itemize}
+
+}
+\end{frame}
+
+\end{document}
