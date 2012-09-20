@@ -1,0 +1,575 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 5 - Variation in Sample Estimates 
+%%%   
+%%%
+%%% Last Modified 9/7/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE>>=
+source("./beamerPrep.R")
+read_chunk("./lecture_5.R")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.6\\textwidth")
+opts_chunk$set(out.width="0.6\\textwidth")
+@
+<<lecture5prep, echo=FALSE, cache=FALSE>>=
+@
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center \huge Error in Estimates \& Probability Distributions
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{For loops in the Wild}
+<<forExample, eval=FALSE>>=
+#Create a counter to keep track of data clusters
+ext$cluster<-rep(NA, nrow(ext))
+ext$cluster[1]<-1
+
+#iterate over the whole column
+for(i in 2:nrow(ext)){
+  
+  #If we've moved on to the next cluster, change the counter
+  ext$cluster[i] <- ifelse(ext$effect..[i] < ext$effect..[i-1],
+  							ext$cluster[i-1]+1,
+								ext$cluster[i-1])
+}
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Variance}
+How variable was that population?
+
+\begin{center} \large $s^2=  \frac{\displaystyle \sum_{i=1}^{n}{(Y_i - \bar{Y})^2}} {n-1}$\\
+\end{center}
+\hfill \\
+ \begin{itemize}
+  \item \textbf{Sums of Squares} over n-1 \\
+  \item n-1 corrects for both sample size and sample bias\\
+  \item $\sigma^2$ if describing the population
+  \item Units in square of measurement...
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Sample Properties: Standard Deviation}
+\center \large $s = \sqrt{s^2}$
+
+\begin{itemize}
+  \item Units the same as the measurement
+  \item If distribution is normal, 67\% of data within 1 SD
+  \item 95\% within 2 SD
+  \item $\sigma$ if describing the population
+\end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%------------------------
+%%% Variation in Estimates
+%%%%%%%%------------------------
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Remember Samples and Populations?}
+How representative of our population are the estimates from our sample?
+<<sample, out.width="0.65\\textwidth", out.height="0.65\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Remember Samples and Populations?}
+We've seen that we get variation in point estimates at any sample size
+<<bootMean, out.width="0.65\\textwidth", out.height="0.65\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
+@
+\begin{center}What does that variation look like?\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Variation in Estimation}
+ \begin{itemize}
+  \item Consider a population with some distribution (rnorm, runif, rgamma)
+  \pause
+  \item Think of the mean of one sample as an individual replicate
+  \pause
+  \item Take many (50) `replicates' from this population of means
+  \pause
+  \item What does the distribution of means look like? Use \emph{hist}
+  \pause
+  \item How does it depend on sample size (within replicates) or distribution type?
+ \end{itemize}
+ \pause
+ \hfill \\
+ Extra: Show the change in distributions with sample size in one figure.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Central Limit Theorem}
+\begin{center}The distribution of means converges on normality\end{center}
+
+<<CLT-unif-lab, echo=FALSE>>=
+@
+<<CLT-unif-lab-plot, out.width="0.6\\textwidth", out.height="0.6\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Central Limit Theorem Simulation}
+
+<<CLT-unif-lab-single, eval=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Estimating Variation Around a Mean}
+Great, so, if we can draw many replicated means from a larger population, we can the standard deviation of an estimate!  \\
+\pause
+\hfill \\
+This standard deviation of the estimate of the mean is the \bf{Standard Error}.\\
+\pause
+\hfill \\
+But for a single study, we only have one sample...\\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{A Bootstrap Simulation Approach to Standard Error}
+\begin{itemize}
+  \item Our sample is representative of the entire population
+  \item Therefore, we can resample it \emph{with replacement} for 1 simulated sample
+  \item We use our sample size as the new sample size as well
+\end{itemize}
+\hfill \\
+\hfill \\
+We set the replace argument in sample = TRUE \\ Try sampling from the bird data with replacement.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{A Bootstrap Simulation Approach to Standard Error}
+
+<<birds-sample>>=
+@
+<<birds-sample>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Standard Error}
+\huge{$$SE_{\bar{Y}} = \frac{s}{\sqrt{n}}$$}
+$\bar{Y}$ - sample mean\\
+s - sample standard deviation\\
+n - sample size\\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{95\% Confidence Interval and SE}
+\begin{itemize}
+  \item Recall that 95\% of the data in a sample is within 2SD of its mean
+  \pause
+  \item So, 95\% of the times we sample a population, the \emph{true} mean will lie within 2SE of our estimated mean
+  \pause
+  \item This is the 95\% \bf{Confidence Interval}
+\end{itemize}
+
+$$\bar{Y}-2SE \le \mu \le \bar{Y}+2SE$$
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Exercise: 95\% Confidence Interval}
+
+$$\bar{Y}-2SE \le \mu \le \bar{Y}+2SE$$
+\begin{itemize}
+  \item Draw 20 simulated samples  with n=10 from a normal distribution of mean 0
+  \pause
+  \item Calculate the upper and lower confidence interval for each
+  \pause
+  \item Compare the 95\% CIs to the true value of the mean
+  \pause
+  \item Extra: graph it with segments
+\end{itemize}
+\hfill \\
+Tip: To bind two vectors together as columns, use \emph{cbind}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: 95\% Confidence Interval}
+<<CI>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: 95\% Confidence Interval}
+<<CIShow>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: 95\% Confidence Interval}
+<<CIPlot, out.width="0.6\\textwidth", out.height="0.6\\textwidth", fig.align='center', echo=FALSE, fig.width=8, fig.height=8>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Variation in Other Estimates}
+\large{
+
+\begin{itemize}
+
+ \item Many SEs and CIs of estimates have formulae and well understood properties
+ \pause
+ \item For those that do not, we can bootstrap the SE of any estimate - e.g., the median
+ \pause
+ \item Bootstrapped estimates (mean of simulated replicates) can be used to assess bias
+ \pause
+ \item Bootstrapping is not a panacea - requires a good sample size to start
+\end{itemize}
+
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center \huge Distributions!
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+<<more-options, echo=FALSE, cache=FALSE>>=
+opts_chunk$set(fig.height=5)
+opts_chunk$set(fig.width=5)
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Frequency Distributions Make Intuitive Sense}
+<<freqDist1, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Frequencies Can be Turned Into Probabilities}
+<<freqDist2, echo=FALSE>>=
+@
+Just divide by total \# of observations\\
+\pause
+But - we have binned observations...
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Frequencies of Individual Observations}
+<<freqDist3, echo=FALSE>>=
+@
+\pause
+Can we turn these into probabilities?
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Probabilities of Individual Measurements}
+<<freqDist4, echo=FALSE>>=
+@
+\pause
+Many probabilities small, and what about the gaps?
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Continuous Probability Distributions}
+<<birdDensity1, echo=FALSE>>=
+@
+\pause
+Any individual observation has a \emph{probability density}.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Probability as Integral Under the Curve}
+<<birdDensityP, echo=FALSE, out.height="0.55\\textwidth", out.width="0.55\\textwidth">>=
+@
+\pause
+We obtain probabilities of observations between a range of values by integrating the distribution over selected values.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Normal Distribution}
+ \begin{columns}
+ \column{0.7\textwidth}
+<<normal, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+ \pause
+ \column{0.4\textwidth}
+  \begin{itemize}
+    \item Defined by it's mean and standard deviation.
+    \item Y \texttildelow N($\mu$, $\sigma$)
+    \item Single mode
+    \item Symmetric
+  \end{itemize}
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{67\% of Values within 1 SD}
+
+<<normalSD1, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{95\% of Values within 2 (1.96) SD}
+
+<<normalSD2, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{How to Get A Probability Density in R}
+
+<<normal, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+ \pause
+<<normalCode1, eval=FALSE>>=
+dnorm(Y, mean = 0, sd = 1)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Probability of a Value or More Extreme Value}
+
+<<pnormPlot, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+ \pause
+<<normalCode2, eval=FALSE>>=
+pnorm(Y, mean = 0, sd = 1)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Cummulative Distribution/Quantile Function}
+
+<<qnormPlot, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+ \pause
+<<normalCode3, eval=FALSE>>=
+qnorm(p, mean = 0, sd = 1)
+@
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Cummulative Distribution/Quantile Function}
+
+pnrm an dqnorm are the inverse of one another
+<<pnormVqnorm>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Lognormal Distribution}
+ \begin{columns}
+ \column{0.6\textwidth}
+<<logNorm, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.5\textwidth}
+  \begin{itemize}
+    \item An exponentiated normal
+    \item Defined by the mean and standard deviation of its log.
+    \item Y \char`\~ LN($\mu_{log}$, $\sigma_{log}$)
+    \item Generated by multiplicative processes
+  \end{itemize}
+<<dlnormcode, eval=FALSE>>=
+dlnorm(Y, 
+       meanlog=0, 
+       sdlog=1)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Gamma Distribution}
+ \begin{columns}
+ \column{0.6\textwidth}
+<<gamma1, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.5\textwidth}
+  \begin{itemize}
+    \item Defined by number of events(shape) average time to an event (scale)
+    \item Can also use rate (1/scale)
+    \item Y \char`\~ G(shape, scale)
+    \item Think of time spent waiting for a bus to arrive
+  \end{itemize}
+<<dgamma, eval=FALSE, tidy=TRUE>>=
+dgamma(Y, 
+       shape=2, 
+       scale=2)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Waiting for more events}
+<<gamma2, echo=FALSE, fig.height=5, fig.width=5>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Longer average time per event}
+<<gamma3, echo=FALSE, fig.height=5, fig.width=5>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Poisson Distribution}
+ \begin{columns}
+ \column{0.7\textwidth}
+<<poissonPlot, echo=FALSE, warning=FALSE, error=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.4\textwidth}
+  \begin{itemize}
+    \item Defined by $\lambda$ - the mean and variance
+    \item Y  \texttt{\char`\~} P(lambda)
+  \end{itemize}
+<<dpois, eval=FALSE, tidy=TRUE>>=
+dpois(Y, 
+       lambda=5)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{When Lambda is Large, Approximately Normal}
+<<poisson3, echo=FALSE, warning=FALSE, error=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Binomial Distribution}
+ \begin{columns}
+ \column{0.7\textwidth}
+<<binomPlot, echo=FALSE, warning=FALSE, error=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.4\textwidth}
+  \begin{itemize}
+    \item Results from multiple coin flips
+    \item Defined by size (\# of flips) and prob (probability of heads)
+    \item Y \texttt{\char`\~} B(size, prob)
+    \item bounded by 0 and size
+  \end{itemize}
+<<dbin, eval=FALSE, tidy=TRUE>>=
+dpois(Y, 
+       size,
+      prob)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Increasing Probability Shifts Distribution}
+<<binomPlot2, echo=FALSE, warning=FALSE, error=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Negative Binomial Distribution}
+ \begin{columns}
+ \column{0.7\textwidth}
+<<dbinomPlot, echo=FALSE, warning=FALSE, error=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.4\textwidth}
+  \begin{itemize}
+    \item Distribution of number of failures before n number of successes in k trials
+    \item Or mean \# of counts, $\mu$, with an overdispersion parameter, size
+    \item Y \texttt{\char`\~} NB($\mu$, size)
+  \end{itemize}
+<<dnbin, eval=FALSE, tidy=TRUE>>=
+dnbin(Y, 
+       mu,
+      size)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Exercise}
+ \begin{itemize}
+ \item Explore the distributions we have discussed
+ \item Examine how changing parameters shifts the output of probability function
+ \item Compare curves generated using density functions (e.g., dnorm) and large number of random draws (e.g. from rnorm)
+ \item Overlay these in plots if you can (hist, lines, etc.)
+ \item Challenge: graphically show integration under the different types of distribution curves
+ \end{itemize}
+\end{frame}
+\end{document}

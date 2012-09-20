@@ -1,0 +1,507 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 6 - Graphics!
+%%%   
+%%%
+%%% Last Modified 9/18/2012
+%%%
+%%% Changelog:
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+<<setup, include=FALSE>>=
+# smaller font size for chunks
+opts_chunk$set(size = 'footnotesize')
+options(width = 30)
+@
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE>>=
+#source("./beamerPrep.R")
+read_chunk("./lecture_6.R")
+
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.7\\textwidth")
+opts_chunk$set(out.width="0.7\\textwidth")
+opts_chunk$set(fig.height=5)
+opts_chunk$set(fig.width=5)
+opts_chunk$set(warning=FALSE)
+@
+<<lecture6prep, echo=FALSE, cache=FALSE>>=
+@
+<<readPlankton, echo=FALSE, cache=FALSE>>=
+@
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%  ggplot2        %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
+\Huge  data visualization
+\hfill \\
+\hfill \\
+\tiny skimming deep waters
+\end{frame}
+
+
+{ % all template changes are local to this group.
+  %from http://tex.stackexchange.com/questions/3915/image-on-full-slide-in-beamer-package
+  \setbeamercolor{background canvas}{bg=black}
+
+    \setbeamertemplate{navigation symbols}{}
+    \begin{frame}[plain]
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[at=(current page.center)] {
+                \includegraphics[width=\paperwidth]{./pics-6/Lake-Baikal-Russia-graphichorizon_net.jpeg}
+            };
+        \end{tikzpicture}
+     \end{frame}
+
+
+%\begin{frame}[plain]
+%\includegraphics[keepaspectratio=true,height=1\paperheight]{./pics-6/Hampton2.jpeg}
+%\end{frame}
+
+\begin{frame}[plain]
+\includegraphics[keepaspectratio=true,height=1\paperheight]{./pics-6/tufte_book.jpeg}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=}
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Show the Data}
+<<showData, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Minimize Distraction}
+<<mimizeDistraction1, echo=FALSE, cache=TRUE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Minimize Distraction}
+<<mimizeDistraction2, echo=FALSE, cache=TRUE>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Make Big Data Coherent}
+<<differentPieces1, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Reveal Several Levels of Detail}
+<<differentPieces2, echo=FALSE, cache=TRUE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Be Closely Integrated with Statistics}
+<<stats, echo=FALSE, cache=TRUE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Data:Ink Ratio}
+\large{
+ \begin{enumerate}
+  \item Above all else show data.
+  \item Maximize the data-ink ratio.
+  \item Erase non-data-ink.
+  \item Erase redundant data-ink.
+  \item Revise and edit
+ \end{enumerate}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Minimizing Ink}
+<<stats, echo=FALSE, cache=TRUE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Minimizing Ink}
+<<statsClean, echo=FALSE, cache=TRUE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Extra Ink in Boxes \& Lines}
+<<boxplotDiatom, echo=FALSE, cache=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{A Cleaner Boxplot}
+<<tufteBoxplot, echo=FALSE, cache=TRUE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Pure Tufte Boxplots}
+<<tufteBoxplotPure, echo=FALSE, cache=TRUE>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%plot        %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
+\Huge \center Basic Plotting in R
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Visualizing a Lot of the Data}
+\begin{columns}
+\column{0.01\paperwidth}
+
+\column{0.29\paperwidth}
+<<pairs2, eval=FALSE>>=
+@
+
+\column{0.7\paperwidth}
+<<pairs2, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%weird - this took FOREVER for knitr to process, so, ditching it
+%\begin{frame}[fragile]
+%\frametitle{Visualizing Everything}
+%\begin{columns}
+%\column{0.01\paperwidth}
+
+%\column{0.29\paperwidth}
+%<<pairs, eval=FALSE>>=
+%@
+
+%\column{0.7\paperwidth}
+%<<pairs, cache=TRUE, echo=FALSE>>=
+%@
+%\end{columns}
+
+%\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{A Basic Bivariate Plot}
+\begin{columns}
+\column{0.01\paperwidth}
+
+\column{0.29\paperwidth}
+<<include=FALSE>>=
+options(width=20)
+@
+<<basicPlot1, eval=FALSE>>=
+@
+
+\column{0.7\paperwidth}
+<<basicPlot1, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{A Basic Bivariate Plot}
+\begin{columns}
+\column{0.01\paperwidth}
+
+\column{0.29\paperwidth}
+<<include=FALSE>>=
+options(width=20)
+@
+<<basicPlot1a, eval=FALSE>>=
+@
+
+\column{0.7\paperwidth}
+<<basicPlot1a, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Adding Axis Labels}
+\begin{columns}
+\column{0.01\paperwidth}
+
+\column{0.29\paperwidth}
+<<include=FALSE>>=
+options(width=20)
+@
+<<basicPlot2, eval=FALSE>>=
+@
+
+\column{0.7\paperwidth}
+<<basicPlot2, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Adding Axis Limits}
+\begin{columns}
+\column{0.01\paperwidth}
+
+\column{0.29\paperwidth}
+<<include=FALSE>>=
+options(width=20)
+@
+<<basicPlot2, eval=FALSE>>=
+@
+
+\column{0.7\paperwidth}
+<<basicPlot2, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{More Point Shapes}
+\begin{columns}
+\column{0.01\paperwidth}
+
+\column{0.29\paperwidth}
+<<include=FALSE>>=
+options(width=20)
+@
+<<basicPlot3, eval=FALSE>>=
+@
+
+\column{0.7\paperwidth}
+<<basicPlot3, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{More Point Shapes}
+
+<<pchShow, cache=TRUE, echo=FALSE, fig.height=7, fig.width=7>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{cex for Size}
+\begin{columns}
+\column{0.01\paperwidth}
+
+\column{0.29\paperwidth}
+<<include=FALSE>>=
+options(width=20)
+@
+<<bigPointPlot, eval=FALSE>>=
+@
+\hfill \\
+See also cex.axis, cex.lab, and more.
+\column{0.7\paperwidth}
+<<bigPointPlot, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Add a Little Color}
+\begin{columns}
+\column{0.02\paperwidth}
+
+\column{0.28\paperwidth}
+<<include=FALSE>>=
+options(width=20)
+@
+<<colorPlot, eval=FALSE>>=
+@
+
+\column{0.7\paperwidth}
+<<colorPlot, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Panels with Par and Mfrow}
+\begin{columns}
+\column{0.01\paperwidth}
+
+\column{0.29\paperwidth}
+<<include=FALSE>>=
+options(width=20)
+@
+<<parPlota, eval=FALSE>>=
+par(mfrow=c(1,2))
+@
+
+\column{0.7\paperwidth}
+<<parPlot, cache=TRUE, echo=FALSE>>=
+@
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Lots of Other Functions that For Plots}
+<<otherPlotfunctions, tidy=FALSE>>=
+@
+\hfill \\
+So....Explore!  Plot with the data, try different par settings, or use some of these functions!
+\end{frame}
+
+%%for ggplot2, can't do columns
+<<reset, include=FALSE>>=
+opts_chunk$set(out.height="0.5\\textwidth")
+opts_chunk$set(out.width="0.6\\textwidth")
+opts_chunk$set(fig.width=6)
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%  ggplot2        %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain]
+\Huge  ggplot2
+\hfill \\
+\hfill \\
+\tiny or how I learned to stop worring and love \url{http://had.co.nz/ggplot2} \& \url{http://stackoverflow.com/}
+\end{frame}
+
+
+\begin{frame}[plain]
+\includegraphics[keepaspectratio=true,height=0.85\paperheight]{./pics-6/ggplot2_grammar.jpg}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Start with nothing...}
+<<include=FALSE>>=
+options(width=50)
+opts_chunk$set(size = 'footnotesize')
+@
+<<ggplot>>=
+@
+\hfill \\
+There is no layout specified here for the data.
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Add a Layer}
+<<geompoint>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Format with Theme}
+<<prettyggplot>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Map a Variable to Color}
+<<include=FALSE>>=
+options(width=50)
+opts_chunk$set(size = 'footnotesize')
+@
+<<color>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Set Your Own Scale}
+
+<<color2>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{And Maybe Add Another Layer}
+
+<<color3>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Facet for Easier Visualization}
+
+<<facet>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{This All Can Lead to Interesting Visualizations}
+
+<<barplot>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Lots of Layers to Add to ggplot2 Objects}
+<<otherggplot2, tidy=FALSE, eval=FALSE>>=
+@
+\hfill \\
+So....Explore!\\
+Also, see \url{http://had.co.nz/ggplot2} for some examples
+\end{frame}
+
+\end{document}
