@@ -1,0 +1,43 @@
+\documentclass{article}
+
+    \usepackage{hyperref} %must be last
+    
+\begin{document}
+
+\title{Homework 2} % provide title info
+\author{Biology 697} % provide author info
+\date{9/13/2012} % provide date
+\maketitle % format and print title page
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problems from Whitlock \& Schluter}
+  Complete problems 14,16 on pg. 19 and 10, 13, 16 from pgs. 79-82.  Use R where possible.  Datasets (so you don't have to type things in) are available at \url{http://www.zoology.ubc.ca/~whitlock/ABD/teaching/datasets.html}.  Note, you may need to apply additional arguments from functions like boxplot.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A little R and Simulation}
+
+\subsection{Sums}
+\subsubsection {Summation} Often, we want to sum up a whole vector.  In R, we can do this with the function sum.  For example, to get the sum of all integers, 1 through 10, we use:
+ <<sum>>=
+ sum(1:10)
+ @
+ 
+ Use a loop to get the same result as the sum function above for 1 through 10.
+ 
+\subsubsection {Cummulative Sums}
+ The R function cumsum takes a vector and gets the cummulative sum of every element in the vector.  For example:
+ <<cumsum>>=
+ cumsum(1:10)
+ @
+  Use a loop to get the same result as the cumsum function for 1:10.  
+
+
+\subsection{More than the mean} 
+ We've looked at the relationship between the sample size and estimation of the mean.  Do the mean, median and standard deviation all appear to require the same sample size for a precise estimate?  Try this with a normally distributed population with mean 10 and standard deviation of 5, and a uniform distribution between 0 and 1000.  Instead of using sample, draw from the distributions directly.  They are your 'population.'\\
+ \hfill \\
+For fun, \texttt{par(mfrow=c(1,3))} will make a plotting window with 3 panels in 1 row (1 row, 3 columns)
+
+\end{document}
+

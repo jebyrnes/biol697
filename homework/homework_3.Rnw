@@ -1,0 +1,134 @@
+\documentclass{article}
+    \usepackage{enumerate} 
+
+    \usepackage{hyperref} %must be last
+    
+\begin{document}
+
+\title{Homework 3} % provide title info
+\author{Biology 697} % provide author info
+\date{9/21/2012} % provide date
+\maketitle % format and print title page
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problems from Whitlock \& Schluter}
+  Complete problems 10-12 on pg. 95.  Use R where possible.  Data sets (so you don't have to type things in) are available at \url{http://www.zoology.ubc.ca/~whitlock/ABD/teaching/datasets.html}.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{R and Plotting}
+N.B. There is more than one way to code correct answers for any of these.  Have fun, and do them as efficiently as possible to the best of your abilities.  And feel free to spice them up and/or make improvements as you see fit.
+
+\subsection{Loading and Cleaning}
+We'll be working with the Lake Baikal Plankton Data.  To learn more about it, the instrumentation, etc., see \url{http://knb.ecoinformatics.org/knb/metacat/nceas.290/nceas}.  Load it in.  Screen it for any obvious outliers.  Should they be eliminated?  Why or why not?
+
+<<readAndClean, echo=FALSE>>=
+plankton<-read.csv("../lectures//data/hampton.5.1-Baikal_74_97_moAvg_plankton.csv", skip=1, na.strings=c("NA",  " NA", ".", " "))
+plankton<-plankton[which(plankton$diatom<200),]
+plankton<-plankton[which(plankton$green<100),]
+library(ggplot2)
+library(bootstrap)
+opts_chunk$set(out.height = "0.7\\textwidth")
+opts_chunk$set(out.width = "0.7\\textwidth")
+
+@
+
+\subsection{Error of Estimates other than the mean}
+As we discussed in class, the re-sampling based approach to assessing error in parameter estimates can be incredibly simple and powerful.  In particular, it can be quite powerful in the case of variables that have asymmetric confidence intervals.  To estimate asymmetric confidence intervals, one re-samples their data as usual to calculate a test statistic, but then looks at the quantiles or percentiles of the test statistic to determine the range of values in which 95\% of their sample estimates fall.
+\hfill \\
+Let's look at how this works for medians.
+
+\begin{enumerate}[(a)]
+  \item Calculate the naive bootstrapped standard error and 95\% confidence intervals for the median of the values of {\tt diatom} in the data.  Use 5000 bootstrapped replicates.
+  
+  \item Compare this naive estimate to the percentile confidence intervals.  Take a look at the arguments for the function {\tt quantile}.  Are they different?  Why or why not?
+  
+  \item Look at the {\tt bootstrap} function in the bootstrap package.  Can you use it to get the 95\% CIs in two lines of code?
+
+\end{enumerate}
+
+<<bootMedian, echo=FALSE, include=FALSE>>=
+n.sims<-5000
+diatomMedian<-rep(NA, n.sims)
+for(i in 1:n.sims){
+  diatomMedian[i]<-median(sample(plankton$diatom, size=nrow(plankton), replace=TRUE), na.rm=T)
+}
+
+diatomCIn<-2*sd(diatomMedian)
+c(median(plankton$diatom)-diatomCIn, median(plankton$diatom)+diatomCIn)
+quantile(diatomMedian, c(0.025, 0.975))
+@
+
+<<bootMedian2, echo=FALSE, include=FALSE>>=
+diatomMedian2<-bootstrap(plankton$diatom, 5000, median)
+quantile(diatomMedian2$thetastar, c(0.025, 0.975))
+@
+
+
+
+\subsection{Faceting and Loops}
+One of the really interesting ways to look at the relationships in this data is to split them by month.  This lets us see trends within months so that we can directly compare processes between years.  For example, we can look at the Diatom-Dinoflagellate relationship as follows. 
+
+<<facetPlotDinoByDiatom.ggplot, echo=FALSE>>=
+qplot(diatom, dinoflagellate, data=plankton)+facet_wrap(~Month, scale="free") + 
+  theme_bw() + 
+  ggtitle("Relationship By Month")
+@
+\hfill \\
+
+Reproduce this plot using both ggplot2 and the basic R graphing package.  The former is straightforward.  The latter should look something like:
+
+<<facetPlotDinoByDiatom, echo=FALSE>>=
+par(mfrow=c(3,4))
+for(a.month in unique(plankton$Month)){
+  plot(dinoflagellate ~ diatom, data=plankton[which(plankton$Month == a.month),], pch=19, main=a.month)
+}
+title("Relationship By Month", outer=TRUE, line=-1.5)
+
+par(mfrow=c(1,1))
+@
+
+\subsection{Representing Variation}
+
+Often in plots we want to show an estimate and the variation around that estimate.  Boxplots do this for a whole sample, but what if we want to see means and the variation around the means?  Reproduce the following two plots.  These are plots of the median diatom abundance in different months and the bootstrapped 95\% confidence interval around the medians.  Produce the plot using both the base R graphics package and in ggplot2.  You'll need to look at some additional plotting functions to get those error lines in the base graphics package.  Likewise, you'll need to play with some additional geoms for ggplot2.  Feel free to spice up your graphs beyond what I have presented here.\\
+
+\newpage
+
+Base graphics package:
+
+<<medianPlot1, echo=FALSE>>=
+#1) Create a new data frame that will have the information for plotting
+#   using 
+newPlankton<-data.frame(Month=unique(plankton$Month))
+
+#2) For loop to calculate the aggregated properties
+for(i in 1:nrow(newPlankton)){
+  #3) Get the monthly data set
+  shortDF<-plankton[which(plankton$Month==newPlankton$Month[i]),]
+  
+  #4) bootstrapped CIs
+  shortDiatomMedian<-bootstrap(shortDF$diatom, 5000, median)
+  
+  newPlankton$Diatom.Median[i]<-median(shortDF$diatom)
+
+  #6) Extract the monthly CIs
+  newPlankton$Diatom.lowerCI[i]<-quantile(shortDiatomMedian$thetastar, 0.025)
+  newPlankton$Diatom.upperCI[i]<-quantile(shortDiatomMedian$thetastar, 0.975)
+  
+}
+
+plot(Diatom.Median ~ Month, data=newPlankton, pch=19, ylim=c(0,15))
+segments(newPlankton$Month, newPlankton$Diatom.lowerCI, newPlankton$Month, newPlankton$Diatom.upperCI)
+@
+
+Ggplot2:
+
+<<medianPlot2, echo=FALSE>>=
+ggplot(data=newPlankton, aes(x=Month, y=Diatom.Median, ymin=Diatom.lowerCI, ymax=Diatom.upperCI)) +
+  geom_point() +
+  geom_linerange() +
+  theme_bw()
+@
+
+
+\end{document}
