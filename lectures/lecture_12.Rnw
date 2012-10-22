@@ -1,0 +1,410 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 12 - Testing Linear Models
+%%%   
+%%%
+%%% Last Modified 10/9/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE, include=FALSE>>=
+source("./beamerPrep.R")
+read_chunk("./lecture_12.R")
+opts_chunk$set(size = "footnotesize")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.55\\textwidth")
+opts_chunk$set(out.width="0.55\\textwidth")
+par(mar=c(5,4,2,2))
+@
+
+<<lecture12prep, echo=FALSE, cache=FALSE, include=FALSE>>=
+@
+<<wolf_lm, echo=FALSE, cache=FALSE, include=FALSE>>=
+@
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\huge Putting your Regression Model to the Test\\
+\hfill \\
+\hfill \\
+\footnotesize If it's possible to prove it wrong \\
+You're going to want to know before too long \\
+You'll need a test \\
+- from \emph{Put it to the Test} by They Might Be Giants
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{You have Fit a Model.  Now...}
+ \begin{enumerate}
+  \item Can you really use this model fit?
+    \item Does your model explain variation in the data?
+  \item Are your coefficients different from 0?
+  \item How much variation is retained by the model?
+  \item How confident can you be in model predictions?
+ \end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Assumptions of Ordinary Least Squares Regression}
+\large
+ \begin{itemize}
+  \item Linearity
+  \item Normality
+  \item Results are not driven by outliers
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Assumptions of Ordinary Least Squares Regression}
+<<wolf_lm_plot_all, fig.height=5, fig.width=5>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Is Anything Systematically Wrong?}
+ \begin{columns}
+ \column{0.05\paperwidth}
+  \column{0.5\paperwidth}
+<<wolf_lm_plot_1, fig.height=5, fig.width=5, echo=FALSE, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+ \column{0.45\paperwidth}
+  \begin{itemize}
+  \item Patterns produced if relationship isn't linear
+  \item Other drivers may affect high or low values
+  \end{itemize}
+
+ \end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Are the Residuals Normal?}
+ \begin{columns}
+ \column{0.05\paperwidth}
+  \column{0.5\paperwidth}
+<<wolf_lm_plot_2, fig.height=5, fig.width=5, echo=FALSE, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+ \column{0.45\paperwidth}
+  \begin{itemize}
+  \item Quantile-Quantile (QQ) Plot
+  \item If residuals are normal, should fall on line
+  \end{itemize}
+
+ \end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Standardized Residuals to Diagnose Error Distribution Problems}
+ \begin{columns}
+ \column{0.05\paperwidth}
+  \column{0.5\paperwidth}
+<<wolf_lm_plot_3, fig.height=5, fig.width=5, echo=FALSE, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+ \column{0.45\paperwidth}
+  \begin{itemize}
+  \item Residuals are standardized
+  \item Shape to data indicates deviation from normality
+  \item Wedge shapes, bow-ties, trends all indicated problems
+  \end{itemize}
+
+ \end{columns}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Influential Observations}
+ \begin{columns}
+ \column{0.05\paperwidth}
+  \column{0.5\paperwidth}
+<<wolf_lm_plot_5, fig.height=5, fig.width=5, echo=FALSE, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+ \column{0.45\paperwidth}
+  \begin{itemize}
+  \item Leverage is distance from mean X \\ \hfill \\
+  \item $h = \frac{1}{n} + \frac{(x_{i}-\bar{x})^2}{SS_{x}}$
+  \end{itemize}
+
+ \end{columns}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Influential Observations}
+ \begin{columns}
+ \column{0.05\paperwidth}
+  \column{0.5\paperwidth}
+<<wolf_lm_plot_4, fig.height=5, fig.width=5, echo=FALSE, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+ \column{0.43\paperwidth}
+  \begin{itemize}
+  \item Combines leverage and residual properties \\ \hfill \\
+  \item Larger values, greater effect on results
+  \end{itemize}
+
+ \end{columns}
+
+\end{frame}
+
+% Testing the model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Testing the Model}
+Ho = The model predicts no variation in the data.\\
+Ha = The model predicts variation in the data.
+<<linefit, fig.height=5, fig.width=5, echo=FALSE, out.height="0.4\\textwidth", out.width="0.4\\textwidth">>=
+@
+\center
+$SS_{Total} = SS_{Regression} + SS_{Error}$\\ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Components of the Total Sums of Squares}
+
+\begin{center}
+$SS_{R} = \sum(\hat{Y_{i}} - \bar{Y})^{2}$, df=1\\ \hfill \\
+$SS_{E} = \sum(Y_{i} - \hat{Y}_{i})^2$, df=n-2\\ \hfill \\
+
+\end{center}
+\pause
+To compare them, we need to correct for different DF.  This is the Mean Square.\\ 
+\hfill \\
+MS=SS/DF\\
+\hfill \\
+e.g, $MS_{E} = \frac{SS_{E}}{n-2}$
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{F Test to Evaluate Predictor's Contribution}
+
+\center
+$F = \frac{MS_{R}}{MS_{E}}$ with DF=1,n-2
+<<df, echo=FALSE>>=
+@
+1-Tailed Test
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{F-test Example: Wolves}
+
+<<anova_wolf, echo=TRUE>>=
+@
+\end{frame}
+
+%VI. Testing coefficients
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Error in the Slope Estimate}
+\huge
+$SE_{b} = \sqrt{\frac{MS_{E}}{SS_{X}}}$ \\
+\hfill \\ \hfill \\
+\pause
+95\% CI =  $b \pm t_{\alpha(2),df}SE_{b}$
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Assessing the Slope}
+\begin{center} \huge
+$t_{b} = \frac{b - \beta_{0}}{SE_{b}}$ \\ \hfill \\
+
+DF=n-2
+\end{center}
+\end{frame}
+
+
+
+%	- R^2 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Coefficient of Determination}
+\Large
+$R^2$ = The porportion of Y is predicted by X.\\
+\hfill \\
+\begin{center}
+$R^2 = \frac{SS_{regression}}{SS_{total}}$\\ \hfill \\
+$    = 1 - \frac{SS_{regression}}{SS_{error}}$
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The "Obese N"}
+\Large
+High sample size can lead to a low p-value, even if no association exists\hfill \\
+<<ObeseN, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Sample Size and $R^2$}
+\Large
+High sample size can lead to a low $R^2$ if residual SD is high relative to slope\hfill \\
+<<ObeseN2, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Example: Wolf Pups}
+<<summary_wolf, size="tiny">>=
+@
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Pufferfish Mimics \& Predator Approaches}
+ \begin{columns}
+ \column{0.5\paperwidth}
+ \begin{itemize}
+  \item Fit the pufferfish data
+  \item Evaluate whether it meets assumptions
+  \item Evaluate Ho and how well this model explains the data
+ \end{itemize}
+ \column{0.5\paperwidth}
+   \includegraphics[width=0.8\textwidth]{./pics-11/thumb-categorie-foto-1046.jpeg}\\
+
+
+ \end{columns}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Confidence Intervals Around Fit}
+
+<<wolf_fitConf, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+Accomodates uncertainty in slope \& intercept
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Confidence Intervals Around Fit}
+
+<<wolf_fitConf, eval=FALSE, tidy=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Confidence Intervals Around Prediction}
+
+<<wolf_fitPred, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+\pause
+Remember: Extrapolation beyond range of data is bad practice
+\end{frame}
+
+%X. Comparing coefficients
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Testing the Effect of Removing Outliers}
+
+<<wolf_lm_plot_5, echo=FALSE, fig.height=5, fig.width=5>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Testing the Effect of Removing Outliers}
+
+<<wolf_lm_delete, tidy=FALSE>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Comparing Two Slopes}
+\huge 
+Ho: $\beta_{1} = \beta{2}$ \\ \hfill \\
+\pause
+$t = \frac{(b_{1} - b_{2}) - (\beta_{1} - \beta{2})}{SE_{b1-b2}}$ \\ \hfill \\
+df = n1 - 2 + n2 - 2
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Comparing Two Slopes}
+\Huge 
+$SE_{b1-b2} = \sqrt{\frac{MSE_{p}}{SS_{X1}} +\frac{MSE_{p}}{SS_{X2}}  }$
+\\ \hfill \\ \hfill \\\pause
+$MSE_{p} = \frac{SSE_{1} + SSE_{2}}{DF}$
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Comparing Two Slopes}
+<<wolf_lm_delete>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Comparing Two Slopes}
+<<compareSlopes1, tidy=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Comparing Two Slopes}
+<<compareSlopes2>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Pufferfish Mimics \& Predator Approaches}
+ \begin{columns}
+ \column{0.5\paperwidth}
+ \begin{itemize}
+  \item Check confidence and prediction intervals of the puffer fit
+ \item Evaluate the effect of dropping outliers
+ \item Challenge: write a function to compare slopes from two different lms
+ 
+ \end{itemize}
+ \column{0.5\paperwidth}
+   \includegraphics[width=0.8\textwidth]{./pics-11/thumb-categorie-foto-1046.jpeg}\\
+
+
+ \end{columns}
+
+\end{frame}
+
+
+
+\end{document}

@@ -1,0 +1,403 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 14 - Evaluating Likelihood Fits
+%%%   
+%%%
+%%% Last Modified 10/17/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE, include=FALSE>>=
+source("./beamerPrep.R")
+read_chunk("./lecture_14.R")
+
+opts_chunk$set(size = "footnotesize")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.55\\textwidth")
+opts_chunk$set(out.width="0.55\\textwidth")
+opts_chunk$set(tidy=FALSE)
+opts_chunk$set(prompt=FALSE)
+opts_chunk$set(comment="#")
+
+par(mar=c(5,4,2,2))
+@
+
+<<lecture14prep, echo=FALSE, cache=FALSE, include=FALSE>>=
+@
+
+<<likelihoodPrep, echo=FALSE, cache=TRUE, include=FALSE>>=
+@
+\begin{document}
+
+%CI
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\huge Fitting \& Evaluating Likelihood Models
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{We Have the Maximum Likelihood Estimate of Lambda}
+\begin{columns}
+\column{0.02\paperwidth}
+\column{0.53\paperwidth}
+<<likelihoodMLE, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4, out.width="1\\textwidth", out.height="1\\textwidth">>=
+@
+\column{0.45\paperwidth}
+\begin{center}p(a and b) = p(a)p(b)\end{center}
+$$p(D | \theta) = \prod_{i=1}^n p(d_{i} | \theta)$$
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is the Variation Around our Estimate}
+\begin{columns}
+\column{0.02\paperwidth}
+\column{0.53\paperwidth}
+<<LoglikelihoodPlot, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4, out.width="1\\textwidth", out.height="1\\textwidth">>=
+@
+\column{0.45\paperwidth}
+\pause
+ \begin{enumerate}
+  \item Log-Likelihood appxomiately $\chi^2$ distirbuted
+  \item 95\% CI holds all values within half of the .05 tail of $\chi^{2}_{df=1}$ 
+  \item ($\approx$ 1.92)
+ \end{enumerate}
+\end{columns}
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Profile Likelihood CIs}
+\begin{columns}
+\column{0.02\paperwidth}
+\column{0.53\paperwidth}
+<<LoglikelihoodConfPlot, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4, out.width="1\\textwidth", out.height="1\\textwidth">>=
+@
+\column{0.45\paperwidth}
+ \begin{enumerate}
+  \item Log-Likelihood appxomiately $\chi^2$ distirbuted
+  \item 95\% CI holds all values within half of the .05 tail of $\chi^{2}_{df=1}$ 
+  \item ($\approx$ 1.92)
+ \end{enumerate}
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Profile Likelihood CIs}
+\begin{columns}
+\column{0.02\paperwidth}
+\column{0.53\paperwidth}
+<<LoglikelihoodConfPlot, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4, out.width="1\\textwidth", out.height="1\\textwidth">>=
+@
+\column{0.45\paperwidth}
+<<likelihoodCI, tidy=FALSE, size="scriptsize">>=
+@
+\end{columns}
+\end{frame}
+
+%LR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{How do we Compare Alternate Hypotheses?}
+
+$$G = 2ln(\frac{L_A}{L_0})$$ \\
+\hfill \\
+where L0 is from  the more constrained hypothesis.\\G is $\chi^2$ distributed with DF = Difference in # Parameters \\
+\pause
+\hfill \\
+$$G = 2(LogL_{A}-LogL_{0})$$ \\
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{How do we Compare Alternate Hypotheses?}
+
+<<LRTest>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+ \begin{itemize}
+  \item Load the Bee Lifespan Data
+  \item Model Bee Lifespans as a Gamma Distribution with shape = 1 (1 bee per death)
+  \item What is the ML estimate of a Bee's Lifespan?
+  \item What is the 95\% CI?
+  \item Is the scale different from 10?
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+<<beeExampleStart>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+<<beeExamplePlot, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4>>=
+@
+abline(h=x) for horizontal lines, use v for vertical lines
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+<<beeExampleCI, eval=TRUE, fig.height=4, fig.width=4>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+<<beeExampleLR, eval=TRUE, fig.height=4, fig.width=4>>=
+@
+\end{frame}
+
+%Multiple Params & Profile
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\huge What if you have multiple parmeters?
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What if we Estimated Shape and Scale?}
+<<mleBeesBruteForce, echo=FALSE, fig.height=5, fig.width=5, cache=TRUE, out.height="0.65\\textwidth",out.width="0.65\\textwidth">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{New Issues with Multiple Parameters}
+\begin{enumerate}
+  \item What Log-Likelihood Values Are Used for 95\% CI?
+  \item Brute-Force Becomes Slow
+  \item Algorithmic Solutions Necessary
+  \item Specification Unwieldy
+\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{We Get the Likelihood Profile of One Coefficient by Iterating Over the Other}
+<<profileBrute, echo=FALSE, fig.height=5, fig.width=5, cache=TRUE, out.height="0.55\\textwidth",out.width="0.55\\textwidth", warning=FALSE>>=
+@
+{\color{red}Shape}s
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{We Get the Likelihood Profile of One Coefficient by Iterating Over the Other}
+<<profileBrute2, echo=FALSE, fig.height=5, fig.width=5, cache=TRUE, out.height="0.55\\textwidth",out.width="0.55\\textwidth", warning=FALSE>>=
+@
+{\color{red}Shape}, {\color{blue}Scale}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{We Get the Likelihood Profile of One Coefficient by Iterating Over the Other}
+<<mleBeesFunction, echo=FALSE>>=
+@
+<<mleBeesProfile, fig.height=4, fig.width=6, cache=FALSE, out.height="0.533\\textwidth",out.width="0.8\\textwidth", warning=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{How do we Search Likelihood Space?}
+
+{\color{red}Optimizing} to find a Minimum Value
+ \begin{itemize}
+   \item optim
+   \item nlm
+   \item nlminb
+   \item \textcolor<2->{blue}{mle2 (wrapper for all of the above)}
+  \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Did You Say Minimum?}
+\pause
+\huge YES! \\
+\pause
+\hfill \\
+We optimize using -sum(LL Function) \\
+\pause
+\hfill \\
+Deviance = -2 * LL
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{How do we Search Likelihood Space?}
+
+There are many {\color{red}Algorithms}
+ \begin{itemize}
+   \item Newtown-Raphson (algorithmicly implemented in {\tt nlm} and {\tt BFGS} method) uses derivatives\\
+    \begin{itemize} \item good for smooth surfaces \& good start values \end{itemize}
+   \item Brent's Method - for single parameter fits
+   \item Nelder-Mead Simplex ({\tt optim}'s default)\\
+    \begin{itemize} \item good for rougher surfaces, but slower\end{itemize}
+   \item Simulated Annealing ({\tt SANN}) uses Metropolis Algorithm search\\
+    \begin{itemize} \item global solution, but slow \end{itemize}
+  \end{itemize}
+  \pause
+  {\bb Warning}: If your algorithm fails to converge, you cannot evaluate your model or coefficients
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Fitting Multiple Parameters with MLE2 from bbmle}
+%<<lib, include=FALSE, warning=FALSE>>=
+%library(bbmle)
+%@
+<<mleBeesFunction, tidy=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Fitting Multiple Parameters with MLE2 from bbmle}
+<<mleBeesOutput>>=
+@
+Coefficient tests based on Wald Confidence Intervals
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Easy Profiling}
+<<mleBeesProfile, fig.height=4, fig.width=6, cache=FALSE, out.height="0.533\\textwidth",out.width="0.8\\textwidth", warning=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Confidence Intervals}
+<<mleBeesCI, warning=FALSE>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Or...MLE2 has Many Probability Functions Builtin}
+<<mleBees, size="normal">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Or...MLE2 has Many Probability Functions Builtin}
+<<mleAnything, eval=FALSE, tidy=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Or...MLE2 has Many Probability Functions Builtin}
+<<mleAnything2, eval=FALSE, tidy=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{We Can Flexibly Compare Models using LRT}
+<<mleBeesAnova, warning=FALSE>>=
+@
+To fit Ho for a linear model fit, just drop the predictor variable alltogether.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Wolf Inbreeding and Litter Size}
+ \begin{columns}
+ \column{0.5\paperwidth}
+\begin{itemize}
+ \item Load the wolf pup data
+ \item Write a MLE regression for pups ~ N(inbreeding)
+ \item This model will have three parameters
+ \item Evluate it's CIs and Wald Tests
+ \item Compare it to your Ho
+ \item Compare it to {\tt lm} results
+ \end{itemize}
+ \column{0.5\paperwidth}
+   \includegraphics[width=0.8\textwidth]{./pics-11/CUTE_WOLF_PUPS_by_horsesrock44.jpeg}\\
+
+ \end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Regression as Function}
+<<regressionMLE, tidy=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Regression with Distribution}
+<<regressionMLE2, tidy=FALSE>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Confidence Intervals}
+<<regressionMLECI, tidy=FALSE, warning=FALSE>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Null Hypothesis Test}
+<<regressionNull, tidy=FALSE, warning=FALSE>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Comparison to LM}
+<<MLEtoLM, tidy=FALSE>>=
+@
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Comparison to LM}
+<<regressionMLEInfo, tidy=FALSE>>=
+@
+\end{frame}
+
+\end{document}

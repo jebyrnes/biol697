@@ -1,0 +1,461 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 9 - Functions
+%%%   
+%%%
+%%% Last Modified 10/1/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE>>=
+source("./beamerPrep.R")
+#read_chunk("./lecture_9.R")
+opts_chunk$set(size = "footnotesize")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.55\\textwidth")
+opts_chunk$set(out.width="0.55\\textwidth")
+par(mar=c(5,4,2,2))
+@
+%<<lecture9 prep, echo=FALSE, cache=FALSE>>=
+%@
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\huge \center Functions, Tests, and More
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{General Homework Notes}
+ 
+ \begin{itemize}
+ \item Read the entire question.
+ \pause
+ 
+ \item Show your answers.  Don't give me the code and assume it shows the answers (e.g., plots, output, etc)
+ \pause
+
+ \item Many things can go in one code blook in a loop
+ \pause
+
+ \item Please put spaces between blocks of code.  One giant chunk of code with no line breaks is unreadable.
+ \pause
+
+ \item Read and follow the Google or Hadley Wickham's style guide!
+ \pause
+
+ \item Try knitr with markdown? (see the blog) (+1 per homework!)
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\huge \center Homework 3, The Final Problem
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+Often in plots we want to show an estimate and the variation around that estimate.  Boxplots do this for a whole sample, but what if we want to see means and the variation around the means?  Reproduce the following two plots.  These are plots of the median diatom abundance in different months and the \textcolor{red}{bootstrapped 95\% confidence interval around the medians}.  Produce the plot using both the base R graphics package and in ggplot2.  You'll need to \textcolor{red}{look at some additional plotting functions} to get those error lines in the base graphics package.  Likewise, you'll need to play with some additional geoms for ggplot2.  Feel free to spice up your graphs beyond what I have presented here.\\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Resources}
+ \begin{itemize}
+  \item \url{http://rseek.org}
+  \item \url{http://stackoverflow.com/}
+  \pause
+  \hfill \\
+  \item \url{http://gallery.r-enthusiasts.com/}
+  \item \url{http://docs.ggplot2.org/}
+  \item \url{http://blog.ggplot2.org/}
+ \end{itemize}
+  
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Read and Clean your Data}
+<<readPlankton, eval=FALSE>>=
+plankton<-read.csv("./hampton.5.1-Baikal_74_97_moAvg_plankton.csv", 
+                   skip=1, na.strings=c("NA",  " NA", ".", " "))
+
+#
+#Visually inspected for outliers, this is the cleanup
+plankton<-plankton[which(plankton$diatom<200),] 
+plankton<-plankton[which(plankton$green<100),]
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Workflow - think backwards}
+ I need  to plot medians, and CIs for each month...\\
+ \pause
+ \hfill \\
+ 
+ So I need to generate vectors or a dataset with one entry per month.\\
+ \pause
+ \hfill \\
+ 
+ Thus, I need to loop over each unique month value, and calculate some stuff.\\
+ \pause
+
+ \hfill \\
+ And before the loop, I'll need to create some blank vectors to store information
+ \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Now moving forward}
+<<step1, eval=FALSE>>=
+#1) Create a new data frame that will have the information for plotting
+#   as we need one row per month 
+newPlankton<-data.frame(Month=unique(plankton$Month))
+@
+\pause
+Unique gets the unique values of a vector - could have done it with {\tt levels(factor(plankton\$Month))}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The for loop}
+<<step2, eval=FALSE>>=
+#2) For loop to calculate the aggregated properties
+for (i in 1:nrow(newPlankton)) {
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Subsetting the Data}
+<<step3, eval=FALSE>>=
+  #3) Get the monthly data set
+  shortDF < -plankton[which(plankton$Month == newPlankton$Month[i]), ]
+@
+\pause
+Alternate solution:
+<<step3a, eval=FALSE>>=
+  shortDF<-subset(plankton, plankton$Month==newPlankton$Month[i])
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Medians}
+<<step4, eval=FALSE>>=
+  #4) Get the Median
+  newPlankton$Diatom.Median[i]<-median(shortDF$diatom)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Bootstrapped CI from the Boostrap Library}
+<<step5, eval=FALSE, tidy=FALSE>>=
+  #5) Extract the monthly CIs
+  shortDiatomMedian<-bootstrap(shortDF$diatom, 5000, median)
+#
+  newPlankton$Diatom.lowerCI[i] <-
+        quantile(shortDiatomMedian$thetastar, 0.025)
+#
+  newPlankton$Diatom.upperCI[i] <- 
+        quantile(shortDiatomMedian$thetastar, 0.975)
+  
+}
+@
+\pause
+Note {\tt shortDiatomMedian\$thetastar}  - looks like a data frame, right?  This is list syntax
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is a list?}
+A list is an object with a key-value combination.  Each slot in a list has a unique key and can contain anything.
+<<listExample>>=
+newList <- list(a=1, b=rnorm(3))
+@
+\pause
+<<listExample2>>=
+newList$a
+
+newList$b
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is a list?}
+You can reference the name of an element in a list many ways
+<<listExample3>>=
+newList[["a"]]
+
+newList[[1]]
+
+@
+\pause
+<<listExample3a>>=
+newList
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is a list?}
+Lists can even contain lists - it can get a little silly.
+<<listExample4>>=
+newList$foo<-list(bar = 13)
+
+newList$foo$bar
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Plotting Using the Graphics Package}
+<<step6, eval=FALSE, tidy=FALSE>>=
+
+#6) plot for points, segments for error bars
+plot(Diatom.Median ~ Month, 
+     data = newPlankton, 
+     pch = 19, ylim = c(0,15))
+@
+\pause
+\hfill \\
+<<step6a, eval=FALSE, tidy=FALSE>>=
+#segments takes x0, y0, x1, y1 as arguments
+segments(newPlankton$Month, newPlankton$Diatom.lowerCI, 
+         newPlankton$Month, newPlankton$Diatom.upperCI)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Plotting Using Ggplot2}
+<<step7, eval=FALSE, tidy=FALSE>>=
+
+#7) the ggplot2 way uses geom_point and geom_linerange
+#although geom_pointrange would also work
+  ggplot(data=newPlankton, 
+         mapping = aes(x = Month, y = Diatom.Median, 
+                       ymin = Diatom.lowerCI, 
+                       ymax = Diatom.upperCI)) +
+  geom_point() +
+  geom_linerange() +
+  theme_bw()
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\huge \center Functions!
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is a function?}
+Functions take some object(s) and use it to give us either a new object or perform an action.
+<<sumExample>>=
+sum(1:10)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is inside of that function}
+Functions take some object(s) and use it to give us either a new object or perform an action.
+<<sumExample1>>=
+sum
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is inside of that function}
+\center \large {\tt function(\emph{arguments}) {\bf Code Block}}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Example: addOne}
+<<addOne, size="large">>=
+addOne <- function(x) x+1
+@
+\pause
+<<addOne1, size="large">>=
+addOne(3)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Default Values}
+<<addOneDefault, size="large">>=
+addOne <- function(x = 0) x+1
+@
+\pause
+<<addOneDefault1, size="large">>=
+addOne()
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{More Hygenic Code: Code Blocks}
+<<addOneBlock, size="large">>=
+addOne <- function(x = 0){
+  x+1
+} 
+@
+\pause
+Note that the last output is returned to the user.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{More Hygenic Code: Return}
+<<addOneReturn, size="large">>=
+addOne <- function(x = 0){
+  return(x+1)
+} 
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Two Functions}
+ \begin{enumerate}
+  \item Write a squaring function (i.e., square(3) = 9)
+  \item Write an add function that returns the sum of two numbers.  If no numbers are supplied, it returns 0. If only one is supplied, it returns that number.
+ \end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Two Functions}
+<<square, size="large">>=
+square <- function(x) x*x
+@
+\pause
+<<add, size="large">>=
+add <- function(x=0, y=0){
+  return(x+y)
+}
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Functions for Repetitive Tasks With a Lot of Code}
+<<sum, size="large", tidy=FALSE>>=
+sumFun <- function(aVec){
+  #start with 0
+  out <- 0 
+  
+  #loop over the vector, adding 
+  #each element together
+  for(i in aVec){
+    out <- out + i
+  }
+
+  #return the result
+  return(out)
+}
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+
+\frametitle{... - the Garbage Collector}
+Don't you just hate how you need to make a vector for sum?\\
+{\tt sum(c(4,5,6,1,2,3))}
+<<sumNew, size="large">>=
+sumNoC <- function(...){
+  #convert ... into a vector
+  avec <- c(...)
+  
+  #NOW sum the vector
+  sum(avec)
+}
+@
+\pause
+This may seem trivial, but it's a nice way to pass arguments between functions.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+
+\frametitle{Exercise: Cummulative Vectors}
+\large Write a function that returns a list with the cummulative sum, product, and mean of a vector.  Allow it to pass arguments to other functions (e.g., mean takes arguments to deal with NAs).
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Cummulative Vectors}
+
+<<cumSumProdMean>>=
+cumSumProdMean <- function(aVec, ...) {
+  #get our sum and product vectors ready
+  s <- rep(NA, length(aVec))
+  s[1] <- aVec[1]
+  m <- p <- s
+  
+  #now loop!
+  for(i in 2:length(aVec)){
+    s[i] <- s[i-1] + aVec[i]
+    p[i] <- p[i-1] * aVec[i]
+    m[i] <- mean(aVec[1:i], ...)
+  }
+  
+  #return the results in a list
+  return(list(sums = s, prod = p, mean=m))
+}
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Cummulative Vectors}
+<<cumSumProdMean1>>=
+cumSumProdMean(1:10)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Cummulative Vectors}
+<<cumSumProdMean2>>=
+cumSumProdMean(c(1:5, NA, 7:10))
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Cummulative Vectors}
+<<cumSumProdMean3>>=
+cumSumProdMean(c(1:5, NA, 7:10), na.rm=T)
+@
+\end{frame}
+
+
+
+\end{document}

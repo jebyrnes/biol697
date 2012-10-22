@@ -1,0 +1,383 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 8 - Hypothesis Testing
+%%%   
+%%%
+%%% Last Modified 9/27/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{wrapfig}
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE>>=
+source("./beamerPrep.R")
+read_chunk("./lecture_8.R")
+opts_chunk$set(size = "footnotesize")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.55\\textwidth")
+opts_chunk$set(out.width="0.55\\textwidth")
+par(mar=c(5,4,2,2))
+@
+<<lecture8prep, echo=FALSE, cache=FALSE>>=
+@
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+
+\huge \center Hypothesis Testing
+ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Inductive v. Deductive Reasoning}
+
+ {\bf Inductive Inference:}  Small pieces of evidence are used to shape a larger theory.\\
+ \hfill \\
+ {\bf Deductive Inference:}A larger theory is used to devise many small tests.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{How Do we Derive Truth from Data?}
+ \begin{enumerate}
+  \item Frequentist inference - correct conclusion drawn from repeated experiments
+    \begin{itemize}
+    \item \textcolor<3->{red}{Null Hypothesis Tests}\\ - falsify a null hypothesis
+    \item \textcolor<4->{blue}{Likelihood/Information Theoretic} - evaluate weight of evidence
+    \end{itemize}
+    \pause
+  \item \textcolor<4->{blue}{Bayesian} - probability of belief that is constantly updated
+ \end{enumerate}
+ 
+\center \visible<3->{ \textcolor<3->{red}{Deductive}} \visible<4->{vs. \textcolor<3->{blue}{Inductive}} 
+ 
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Null Hypothesis Tests \& Popper}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=1\textwidth]{./pics-8/Karl_Popper_wikipedia.jpeg}
+
+\column{0.5\textwidth}
+ Falsification of hypotheses is key! \\
+ \hfill \\
+  A theory should be considered scientific if, and only if, it is falsifiable.
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Deductive Reasoning and Null Hypothesis Tests}
+ \Large
+ A null hypothesis is a default condition that we can attempt to falsify.\\
+
+  
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Common Uses of Null Hypothesis Tests}
+ \Large
+ \begin{itemize}
+  \item Ho: Two groups are the same
+  \item Ho: An estimated parameter is not different from 0
+  \item Ho: The slopes of two lines are the same
+  \item Etc...
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Ho and Ha}
+ There are often many alternate hypotheses. Rejection of the null does not imply acceptance of any single alternative hypothesis.
+ <<manyPlot, fig.height="0.4\\textwidth",  fig.width="0.4\\textwidth", echo=FALSE>>=
+a<-seq(-3,3,.01)
+plot(a, dnorm(a), xlim=c(-15,15), type="l")
+matplot(a+10, dnorm(a+10, mean=10), type="l", col="red", add=T)
+matplot(a-10, dnorm(a-10, mean=-10), type="l", col="orange", add=T)
+matplot(seq(-5,15,.01), dnorm(seq(-5,15,.01), mean=5, sd=3), type="l", col="blue", add=T)
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Null Distributions}
+ Null hypotheses are associated with null statistical distributions.  For example, if Ho states that a value is normally distributed, but is not different from 0, the null distribtion is centered on 0 with some standard deviation.
+ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Null Distributions}
+<<normal, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Evaluation of a Test Statistic}
+ We can use our data to calculate a test statistic that maps to a value of the null distribution.  We can then calculate the probability of observing our data, or of observing data even more extreme, given that the null hypothesis is true.
+ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Evaluation of a Test Statistic}
+<<normalTest, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{The P Value}
+\begin{columns}
+\column{0.5\textwidth}
+\Large P-value: The Probability of making an observation or more extreme observation given that the null hypothesis is true.
+\column{0.5\textwidth}
+\includegraphics[width=0.9\textwidth]{./pics-8/fisher2.jpeg}\\
+R. A. Fisher
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{The P Value}
+<<normalFill, echo=FALSE>>=
+@
+ p=0.0227\pause,Note - this is a one-tailed test!
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{1-Tailed v. 2-Tailed Tests}
+1-Tailed Test: We are explicit about whether Ha implies that our sample is greater than or less than our null value.\\
+\pause
+\hfill \\
+2-Tailed Test: We are make no assumption about the sign or direction of our alternative hypotheses.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Two-Tailed P Value}
+<<normalFill2, echo=FALSE>>=
+@
+ p=0.0454 from \tt pnorm(-2)*2
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+
+\center \huge When should you use a 1-Tailed Test?
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Exercise: Evaluate Support for Null Hypothesis}
+ \begin{itemize}
+  \item Typically, the number of warts on a toad is Poisson distributed with a $\lambda$ of 54
+  \item You survey a lake suspected to contain high PAH levels.  You pick up a toad, and it has 40 warts.
+  \item What is your null hypothesis?
+  \item What is the probability of making this observation, given your null?
+  \item Challenge: How does your p value change with \# of warts, say, from 1 to 108 warts?
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Exercise: Evaluate Support for Null Hypothesis}
+<<r-pois-p>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Exercise: Evaluate Support for Null Hypothesis}
+<<rpois-challenge, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Exercise: Evaluate Support for Null Hypothesis}
+<<rpois-challenge, eval=FALSE>>=
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Neyman-Pearson Hypothesis Testing and Decision Making}
+\begin{columns}
+
+\column{0.5\textwidth}
+\includegraphics[height=0.6\textheight]{./pics-8/neyman.jpeg}\\
+\center Jerzy Neyman
+
+\column{0.5\textwidth}
+\includegraphics[height=0.6\textheight]{./pics-8/Pearson_Egon_4.jpeg}
+\center Egon Pearson
+\end{columns}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Neyman-Pearson Hypothesis Testing}
+  Rejection of a null hypothesis if the p-value is below some critical level - $\alpha$ \\
+  \hfill \\
+  \pause
+  If p $\le$ $\alpha$ then we reject the null.  There is \emph{strong support} for the null to be falsified.  This result is sometimes termed being statistically significant. \\
+  \hfill \\
+  \pause
+  $\alpha$ is often 0.05, but, set it according to your a priori reasoning (including what you assume your power to be)
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center \huge Statistical Significance is NOT Biological Sigficance.\\
+\hfill \\
+\normalsize Should we even use the word "significant"?  Why or why not just talk about level of support for rejecting the null?
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Types of Errors in a NHST framework}
+\begin{tabular}{c|c|c|}
+& \textbf{Ho is True} &
+\textbf{Ho is False} \\
+\hline
+\hline
+\textbf{Reject Ho} & Type I Error  & Correct OR Type S error  \\
+\hline
+\textbf{Fail to Reject Ho} & -- & Type II Error\\
+\end{tabular}
+
+\hfill \\
+\begin{itemize}
+ \item Possibility of Type I error regulated by choice of $\alpha$
+ \item Probability of Type II error regulated by choice of $\beta$
+ \item Probability of Type III error is called $\delta$ 
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Type S Error }
+Correctly rejecting the null hypothesis for the wrong reason \\
+\hfill \\
+This is a Type S, or Type III error - a mistake of sign.  Often inherent in an experiment's design, or possible by change.
+\hfill \\
+Can determine by mechanistic simulation or a redesigned study.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Power}
+ \begin{itemize}
+ \item If $\beta$ is the probability of comitting a type II error, 1-$\beta$ is the power of a test.  
+ \item The higher the power, the less of a chance of comitting a type II error.  
+ \item We typically want a power of 0.8 or higher.
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Power via Simulation}
+ We can assess the power of a test via simulation.  We simulate a test statistic, and assuming a particular Ha is true, evaluate whether we falsely fail to reject Ho.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Sample Size and Power via Simulation}
+ Ho is that the average effect of a drug on heart rate is 0.  Actually, is speeds it up by 15 beats per minute.  What is the effect of sample size of patients on power, assuming a SD of 6?
+ 
+<<powerSim1, echo=FALSE>>=
+
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Sample Size and Power via Simulation}
+ We can get the p value of each simulation using pnorm - and, remember, this is two-tailed!
+ 
+<<powerSim2, fig.width="0.5\\textwidth">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Sample Size and Power via Simulation}
+ Power is 1 - the fraction of those tests which p $\le \alpha$.  So, we loop over all sample sizes to get...
+ 
+<<powerSim3, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Sample Size and Power via Simulation}
+ Power is 1 - the fraction of those tests which p $\le \alpha$.  So, we loop over all sample sizes to get...
+ 
+<<powerSim4, eval=FALSE>>=
+power<-rep(NA, 10)
+  for(i in 1:10){
+    nVec <- vec[which(n==i)]
+    power[i] <- 1 - sum(nVec <= 0.05)/ length(nVec)
+  }
+
+ plot(power ~ I(1:10), xlab="n", ylab="power", type="b")
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Exercise: Power and Simulation}
+ \begin{itemize}
+  \item You allow lizards to choose to perch on a stick or remain on the ground
+  \item Ho is that half will choose to perch.  $\alpha$ is 0.05.
+  \item Assuming that the probability that they will actually perch is 0.2, how is power affected by \# of lizards? 
+  \item Challenge: How will this relationship be affected as you change alpha?
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Exercise: Power and Simulation}
+ <<lizardPower, echo=FALSE>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+ \frametitle{Exercise: Power and Simulation}
+ <<lizardPower2, echo=FALSE>>=
+@
+
+\end{frame}
+
+\end{document}

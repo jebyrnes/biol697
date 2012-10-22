@@ -1,0 +1,561 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 7 - Probability and Distributions 
+%%%   
+%%%
+%%% Last Modified 9/24/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{wrapfig}
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE>>=
+source("./beamerPrep.R")
+read_chunk("./lecture_7.R")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.6\\textwidth")
+opts_chunk$set(out.width="0.6\\textwidth")
+@
+<<lecture7prep, echo=FALSE, cache=FALSE>>=
+@
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center \huge Probability!
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\huge \center \emph {Probability} - The fraction of observations of an event given multiple repeated independent observations.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{A Feeding Trial Example}
+%%%budworm EATING
+
+\begin{wrapfigure}{R}{0.55\textwidth}
+  \vspace{-20pt}
+  \includegraphics[width=0.45\textwidth]{./pics-7/tobacco-budworm-large-Melanie-Marr.jpeg}
+\end{wrapfigure}
+
+Let's say you've offered 50 budworms a leaf to eat.  45 eat.  P(eats) = $\frac{45}{50} = 0.9 $ \\
+
+\hfill \\
+\pause
+Now you offer 50 others a \textcolor{red}{treated} leaf.  10 eat.  P(eats) = $\frac{10}{50} = 0.2 $ \\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Probability of NOT doing something}
+%%%budworm EATING
+
+\begin{wrapfigure}{R}{0.55\textwidth}
+  \vspace{-20pt}
+  \includegraphics[width=0.45\textwidth]{./pics-7/tobacco-budworm-large-Melanie-Marr.jpeg}
+\end{wrapfigure}
+
+What is the probability of \textcolor{red}{not} eating if you are fed a treated leaf?\\
+
+\hfill \\
+\pause
+ P(! eats) = $1-\frac{10}{50} = 0.8 $ \\
+\hfill \\
+\pause
+P(!A) = 1-P(A)
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Probability of Exclusive Events}
+%%%budworm EATING
+
+\begin{wrapfigure}{R}{0.55\textwidth}
+  \vspace{-20pt}
+  \includegraphics[width=0.45\textwidth]{./pics-7/tobacco-budworm-large-Melanie-Marr.jpeg}
+\end{wrapfigure}
+
+What if we offered our budworms both a treated and untreated leaf?\\
+20 eat the control, 5 eat the treated leaf.
+
+\hfill \\
+\pause
+ P(eats) = $\frac{20}{50} + \frac{5}{50} = 0.5$ \\
+\hfill \\
+\pause
+P(A or B) = P(A) + P(B)
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Two Events}
+%%%budworm EATING
+
+\begin{wrapfigure}{R}{0.5\textwidth}
+  \vspace{-20pt}
+  \includegraphics[width=0.4\textwidth]{./pics-7/tobacco-budworm-large-Melanie-Marr.jpeg}
+\end{wrapfigure}
+
+We offer our budworms a leaf.  45 eat it.  Then we offern them seconds.  20 of the original 45 each the second leaf.
+
+\hfill \\
+\pause
+ P(eats twice) = $\frac{20}{50} = 0.4$ \\
+ \pause
+ \hfill \\
+ $= \frac{45}{50} * \frac{20}{45}$ \\
+ \pause 
+ \hfill \\
+ P(A and B) = P(A)P(B) 
+ 
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Two Conditional Events}
+%%%budworm EATING
+
+\begin{wrapfigure}{R}{0.5\textwidth}
+  \vspace{-20pt}
+  \includegraphics[width=0.4\textwidth]{./pics-7/tobacco-budworm-large-Melanie-Marr.jpeg}
+\end{wrapfigure}
+
+If we are interested  in the probability of eating twice - i.e. the probability of eating a second time \emph{given} that a budworm ate once, we phrase that somewhat differently.\\
+\hfill \\
+$P(eats_{2} | eats_{1})$ \\
+\pause
+\hfill \\
+So, P(A and B) = P(A)P(B\|A)
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Probability Tree}
+
+
+%from http://www.texample.net/tikz/examples/probability-tree/
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=3.5cm, sibling distance=3.5cm]
+\tikzstyle{level 2}=[level distance=3.5cm, sibling distance=2cm]
+
+% Define styles for bags and leafs
+\tikzstyle{bag} = [text width=4em, text centered]
+\tikzstyle{end} = [circle, minimum width=3pt,fill, inner sep=0pt]
+
+\begin{tikzpicture}[grow=right, sloped, scale=0.9]
+\node[bag] {Fed a Leaf}
+    child {
+        node[bag] {Doesn't Eat}        
+            child {
+                node[end, label=right:
+                    {Doesn't Eat}] {}
+                edge from parent
+                %node[above] {$1-P$}
+                node[below]  {$1-P(eats_{2} | !eats_{1})$}
+            }
+            child {
+                node[end, label=right:
+                    {Eats}] {}
+                edge from parent
+                node[above] {$P(eats_{2} | !eats_{1})$}
+                %node[below]  {$Q_{2}$}
+            }
+            edge from parent 
+           % node[above] {$W$}
+            node[below]  {$1-P(eats_{1})$}
+    }
+    child {
+        node[bag] {Eats}        
+        child {
+                node[end, label=right:
+                    {Doesn't Eat}] {}
+                edge from parent
+               % node[above] {$B$}
+                node[below]  {$1-P(eats_{2} | eats_{1})$}
+            }
+            child {
+                node[end, label=right:
+                    {Eats}] {}
+                edge from parent
+                node[above] {$P(eats_{2} | eats_{1})$}
+               % node[below]  {$Q_{1}$}
+            }
+        edge from parent         
+            node[above] {$P(eats_{1})$}
+           % node[below]  {$P$}
+    };
+\end{tikzpicture}
+\pause
+$P(eats_{2}) = P(eats_{2} | eats_{1}) + P(eats_{2} | !eats_{1})$
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Bayes Theorem}
+
+\begin{wrapfigure}{R}{0.5\textwidth}
+  \vspace{-20pt}
+  \includegraphics[width=0.4\textwidth]{./pics-7/Thomas_Bayes_Grafure.jpg}
+\end{wrapfigure}
+$P(A|B)P(B) = P(B|A)P(A)$ \\
+\hfill \\
+\pause
+So...\\
+$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{GMO Collateral Damage}
+
+Let's say you you had a rare but extremely harmful budworm munching ravenously through your fields.  You've developed a really effective GMO tobacco leaf to help stop it.  It has a 75\% kill rate.  And, miraculously, it only has a 15\% kill rate of non-budworms.  Given that the budworms make up about 10\% of the insects in a field, what's porportion of dead insects WON'T be budworms?
+\pause
+\hfill \\
+\hfill \\
+$P(!W | D) = 1- P(W | D)$ \\
+\pause
+\hfill \\
+$P(W|D) = \frac{P(D|W)P(W)}{P(D)} $ \\ 
+\pause
+$= \frac{P(D|W)P(W)}{P(D | W)P(W) + P(D | !W)P(!T)}$ 
+\pause
+$=\frac{0.75*0.1}{0.75*0.1 + 0.15*0.9} = 0.357 $ \\
+\pause
+\hfill \\
+$1 - 0.357 = 0.643$ - the majority of the dead!
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Why are we talking about this??}
+
+
+As we test hypotheses in a \emph{frequentist} framework, we'll be asking about the probability of observing data given that a hypothesis is true - P(Data \| Hypothesis).
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\center \huge Distributions!\\
+\small (when a  point probabilty just ain't enough)
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+<<more-options, echo=FALSE, cache=FALSE>>=
+opts_chunk$set(fig.height=5)
+opts_chunk$set(fig.width=5)
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Frequency Distributions Make Intuitive Sense}
+<<freqDist1, echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Frequencies Can be Turned Into Probabilities}
+<<freqDist2, echo=FALSE, out.height="0.5\\textwidth", out.width="0.5\\textwidth">>=
+@
+Just divide by total \# of observations\\
+\pause
+But - we have binned observations...
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Frequencies of Individual Observations}
+<<freqDist3, echo=FALSE>>=
+@
+\pause
+Can we turn these into probabilities?
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Probabilities of Individual Measurements}
+<<freqDist4, echo=FALSE>>=
+@
+\pause
+Many probabilities small, and what about the gaps?
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Continuous Probability Distributions}
+<<birdDensity1, echo=FALSE>>=
+@
+\pause
+Any individual observation has a \emph{probability density}.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Probability as Integral Under the Curve}
+<<birdDensityP, echo=FALSE, out.height="0.55\\textwidth", out.width="0.55\\textwidth">>=
+@
+\pause
+We obtain probabilities of observations between a range of values by integrating the distribution over selected values.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Normal Distribution}
+ \begin{columns}
+ \column{0.7\textwidth}
+<<normal, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+ \pause
+ \column{0.4\textwidth}
+  \begin{itemize}
+    \item Defined by it's mean and standard deviation.
+    \item Y \texttildelow N($\mu$, $\sigma$)
+    \item Single mode
+    \item Symmetric
+  \end{itemize}
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{67\% of Values within 1 SD}
+
+<<normalSD1, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{95\% of Values within 2 (1.96) SD}
+
+<<normalSD2, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{How to Get A Probability Density in R}
+
+<<normal, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+ \pause
+<<normalCode1, eval=FALSE>>=
+dnorm(Y, mean = 0, sd = 1)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Probability of a Value or More Extreme Value}
+
+<<pnormPlot, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+ \pause
+<<normalCode2, eval=FALSE>>=
+pnorm(Y, mean = 0, sd = 1)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Cummulative Distribution/Quantile Function}
+
+<<qnormPlot, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+ \pause
+<<normalCode3, eval=FALSE>>=
+qnorm(p, mean = 0, sd = 1)
+@
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Cummulative Distribution/Quantile Function}
+
+pnrm an dqnorm are the inverse of one another
+<<pnormVqnorm>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Lognormal Distribution}
+ \begin{columns}
+ \column{0.6\textwidth}
+<<logNorm, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.5\textwidth}
+  \begin{itemize}
+    \item An exponentiated normal
+    \item Defined by the mean and standard deviation of its log.
+    \item Y \char`\~ LN($\mu_{log}$, $\sigma_{log}$)
+    \item Generated by multiplicative processes
+  \end{itemize}
+<<dlnormcode, eval=FALSE>>=
+dlnorm(Y, 
+       meanlog=0, 
+       sdlog=1)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Gamma Distribution}
+ \begin{columns}
+ \column{0.6\textwidth}
+<<gamma1, echo=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.5\textwidth}
+  \begin{itemize}
+    \item Defined by number of events(shape) average time to an event (scale)
+    \item Can also use rate (1/scale)
+    \item Y \char`\~ G(shape, scale)
+    \item Think of time spent waiting for a bus to arrive
+  \end{itemize}
+<<dgamma, eval=FALSE, tidy=TRUE>>=
+dgamma(Y, 
+       shape=2, 
+       scale=2)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Waiting for more events}
+<<gamma2, echo=FALSE, fig.height=5, fig.width=5>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Longer average time per event}
+<<gamma3, echo=FALSE, fig.height=5, fig.width=5>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Poisson Distribution}
+ \begin{columns}
+ \column{0.7\textwidth}
+<<poissonPlot, echo=FALSE, warning=FALSE, error=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.4\textwidth}
+  \begin{itemize}
+    \item Defined by $\lambda$ - the mean and variance
+    \item Y  \texttt{\char`\~} P(lambda)
+  \end{itemize}
+<<dpois, eval=FALSE, tidy=TRUE>>=
+dpois(Y, 
+       lambda=5)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{When Lambda is Large, Approximately Normal}
+<<poisson3, echo=FALSE, warning=FALSE, error=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Binomial Distribution}
+ \begin{columns}
+ \column{0.7\textwidth}
+<<binomPlot, echo=FALSE, warning=FALSE, error=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.4\textwidth}
+  \begin{itemize}
+    \item Results from multiple coin flips
+    \item Defined by size (\# of flips) and prob (probability of heads)
+    \item Y \texttt{\char`\~} B(size, prob)
+    \item bounded by 0 and size
+  \end{itemize}
+<<dbin, eval=FALSE, tidy=TRUE>>=
+dpois(Y, 
+       size,
+      prob)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Increasing Probability Shifts Distribution}
+<<binomPlot2, echo=FALSE, warning=FALSE, error=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Negative Binomial Distribution}
+ \begin{columns}
+ \column{0.7\textwidth}
+<<dbinomPlot, echo=FALSE, warning=FALSE, error=FALSE, fig.height=4, fig.width=4>>=
+@
+
+ \column{0.4\textwidth}
+  \begin{itemize}
+    \item Distribution of number of failures before n number of successes in k trials
+    \item Or mean \# of counts, $\mu$, with an overdispersion parameter, size
+    \item Y \texttt{\char`\~} NB($\mu$, size)
+  \end{itemize}
+<<dnbinom, eval=FALSE, tidy=TRUE>>=
+dnbinom(Y, 
+       mu,
+      size)
+@
+ \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+ \frametitle{Exercise}
+ \begin{itemize}
+ \item Explore the distributions we have discussed
+ \item Examine how changing parameters shifts the output of probability function
+ \item Compare curves generated using density functions (e.g., dnorm) and large number of random draws (e.g. from rnorm)
+ \item Overlay these in plots if you can (hist, lines, etc.)
+ \item Challenge: graphically show integration under the different types of distribution curves (?polygon or ?geom\_ribbon)
+ \end{itemize}
+\end{frame}
+
+
+\end{document}

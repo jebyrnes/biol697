@@ -4,10 +4,14 @@
 %%% Lecture 4 - Estimating Population Properties
 %%%   
 %%%
-%%% Last Modified 9/7/2012
+%%% Last Modified 9/13/2012
 %%%
 %%% Changelog:
-%%% 
+%%% 9/13/2012 - Cut file to where we reached by the end of lecture.  Rest moved to lecture 5.
+%%%
+%%% Notes:
+%%% 9/13/2012 - Got through end of descriptions of samples
+%%%           - next year make this all loops - cumsum to fib to population
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{tikz}
@@ -20,7 +24,11 @@
 %%%%%load in code chunks, and run some preperatory code
 <<set-options, echo=FALSE, cache=FALSE>>=
 source("./beamerPrep.R")
-read_chunk("./lecture_4.R")
+read_chunk("./lecture_6.R")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.6\\textwidth")
+opts_chunk$set(out.width="0.6\\textwidth")
+par(mfrow=c(5,4,4,2))
 @
 <<lecture4prep, echo=FALSE, cache=FALSE>>=
 @
@@ -114,7 +122,7 @@ Precision plateaus around ~50.
  \begin{itemize}
   \item Write a for loop that calculates the first 15 numbers of the fibonacci sequence
  \end{itemize}
- \emph{1, 1, 2, 3, 5, 7, 9...}
+ \emph{1, 1, 2, 3, 5, 8, 13...}
  \hfill \\
   \small{(Challenge: do it with a starting vector of only NA's )}
   
@@ -257,189 +265,5 @@ The midpoint of the data-set is the 50th percentile!
 Whiskers show 1.5 * interquartile range, Points show outliers
 \end{frame}
 
-
-%%%%%%%%------------------------
-%%% Variation in Estimates
-%%%%%%%%------------------------
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-
-  \Huge \begin{center}{Variation in Sample Estimates} \end{center}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Remember Samples and Populations?}
-How representative of our population are the estimates from our sample?
-<<sample, out.width="0.65\\textwidth", out.height="0.65\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Remember Samples and Populations?}
-We've seen that we get variation in point estimates at any sample size
-<<bootMean, out.width="0.65\\textwidth", out.height="0.65\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
-@
-\begin{center}What does that variation look like?\end{center}
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Exercise: Variation in Estimation}
- \begin{itemize}
-  \item Consider a population with some distribution (rnorm, runif, rgamma)
-  \pause
-  \item Think of the mean of one sample as an individual replicate
-  \pause
-  \item Take many (50) `replicates' from this population of means
-  \pause
-  \item What does the distribution of means look like? Use \emph{hist}
-  \pause
-  \item How does it depend on sample size (within replicates) or distribution type?
- \end{itemize}
- \pause
- \hfill \\
- Extra: Show the change in distributions with sample size in one figure.
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Central Limit Theorem}
-\begin{center}The distribution of means converges on normality\end{center}
-
-<<CLT-unif-lab, echo=FALSE>>=
-@
-<<CLT-unif-lab-plot, out.width="0.6\\textwidth", out.height="0.6\\textwidth", fig.align='center', fig.height=4, fig.width=4, echo=FALSE>>=
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Central Limit Theorem Simulation}
-
-<<CLT-unif-lab-single, eval=FALSE>>=
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Estimating Variation Around a Mean}
-Great, so, if we can draw many replicated means from a larger population, we can the standard deviation of an estimate!  \\
-\pause
-\hfill \\
-This standard deviation of the estimate of the mean is the \bf{Standard Error}.\\
-\pause
-\hfill \\
-But for a single study, we only have one sample...\\
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{A Bootstrap Simulation Approach to Standard Error}
-\begin{itemize}
-  \item Our sample is representative of the entire population
-  \item Therefore, we can resample it \emph{with replacement} for 1 simulated sample
-  \item We use our sample size as the new sample size as well
-\end{itemize}
-\hfill \\
-\hfill \\
-We set the replace argument in sample = TRUE \\ Try sampling from the bird data with replacement.
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{A Bootstrap Simulation Approach to Standard Error}
-
-<<birds-sample>>=
-@
-<<birds-sample>>=
-@
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Standard Error}
-\huge{$$SE_{\bar{Y}} = \frac{s}{\sqrt{n}}$$}
-$\bar{Y}$ - sample mean\\
-s - sample standard deviation\\
-n - sample size\\
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{95\% Confidence Interval and SE}
-\begin{itemize}
-  \item Recall that 95\% of the data in a sample is within 2SD of its mean
-  \pause
-  \item So, 95\% of the times we sample a population, the \emph{true} mean will lie within 2SE of our estimated mean
-  \pause
-  \item This is the 95\% \bf{Confidence Interval}
-\end{itemize}
-
-$$\bar{Y}-2SE \le \mu \le \bar{Y}+2SE$$
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\frametitle{Exercise: 95\% Confidence Interval}
-
-$$\bar{Y}-2SE \le \mu \le \bar{Y}+2SE$$
-\begin{itemize}
-  \item Draw 20 simulated samples  with n=10 from a normal distribution of mean 0
-  \pause
-  \item Calculate the upper and lower confidence interval for each
-  \pause
-  \item Compare the 95\% CIs to the true value of the mean
-  \pause
-  \item Extra: graph it with segments
-\end{itemize}
-\hfill \\
-Tip: To bind two vectors together as columns, use \emph{cbind}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Exercise: 95\% Confidence Interval}
-<<CI>>=
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Exercise: 95\% Confidence Interval}
-<<CIShow>>=
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile]
-\frametitle{Exercise: 95\% Confidence Interval}
-<<CIPlot, out.width="0.6\\textwidth", out.height="0.6\\textwidth", fig.align='center', echo=FALSE, fig.width=8, fig.height=8>>=
-@
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\frametitle{Variation in Other Estimates}
-\large{
-
-\begin{itemize}
-
- \item Many SEs and CIs of estimates have formulae and well understood properties
- \pause
- \item For those that do not, we can bootstrap the SE of any estimate - e.g., the median
- \pause
- \item Bootstrapped estimates (mean of simulated replicates) can be used to assess bias
- \pause
- \item Bootstrapping is not a panacea - requires a good sample size to start
-\end{itemize}
-
-}
-\end{frame}
 
 \end{document}

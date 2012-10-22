@@ -1,0 +1,468 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 11 - Correlation & Intro to Regression
+%%%   
+%%%
+%%% Last Modified 10/6/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE, include=FALSE>>=
+source("./beamerPrep.R")
+read_chunk("./lecture_11.R")
+opts_chunk$set(size = "footnotesize")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.55\\textwidth")
+opts_chunk$set(out.width="0.55\\textwidth")
+par(mar=c(5,4,2,2))
+@
+
+<<lecture11prep, echo=FALSE, cache=FALSE, include=FALSE>>=
+@
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\huge \center Correlation and Regression \\
+\hfill \\
+\includegraphics[width=0.7\paperwidth]{./pics-11/correlation_xkcd.jpg}\\
+\footnotesize \url{http://xkcd.com/552/}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{How are X and Y Related}
+ \begin{columns}
+ 
+ \column{0.5\paperwidth}
+ \includegraphics[width=0.8\textwidth]{./pics-11/regression.jpg} \\
+ \center Causation (regression) \\ p(Y $|$ X=x)
+ \column{0.5\paperwidth}
+ \center
+ \includegraphics[width=0.7\textwidth]{./pics-11/correlation.jpg}\\
+  Correlation \\ p(Y=y, X=x)
+
+ \end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Correlation Can be Induced by Many Mechanisms}
+ \begin{columns}
+ 
+ \column{0.5\paperwidth}
+ \center
+ \includegraphics[width=0.6\textwidth]{./pics-11/correlation-1.jpg} \\
+ \column{0.5\paperwidth}
+ \center
+ \includegraphics[width=0.6\textwidth]{./pics-11/correlation-2.jpg}\\
+  
+
+ \end{columns}
+ \center
+ \includegraphics[width=0.5\textwidth]{./pics-11/correlation-3.jpg}\\
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Example: Wolf Inbreeding and Litter Size}
+ \begin{columns}
+ \column{0.5\paperwidth}
+<<wolf_scatterplot, echo=FALSE, fig.height=4, fig.width=4, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+ \column{0.5\paperwidth}
+   \includegraphics[width=0.8\textwidth]{./pics-11/CUTE_WOLF_PUPS_by_horsesrock44.jpeg}\\
+
+
+ \end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Example: Wolf Inbreeding and Litter Size}
+ \begin{columns}
+ 
+ \column{0.5\paperwidth}
+ \center
+ \includegraphics[width=0.9\textwidth]{./pics-11/wolf-regression.jpg} \\
+ \column{0.5\paperwidth}
+ \center
+ \includegraphics[width=0.9\textwidth]{./pics-11/wolf-correlation.jpg}\\
+  
+
+ \end{columns}
+ \pause 
+\center We don't know which is correct - or if another model is better.  We can only examine \emph{correlation}.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Covariance}
+Describes the relationship between two variables.  Not scaled.\\
+\hfill \\
+$\sigma_{xy}$ = population level covariance, $s_{xy}$ = covariance in your sample
+\begin{columns}
+ \column{0.5\textwidth}
+ \huge $\sigma_{XY} = \frac{\sum (X-\bar{X})(y-\bar{Y})}{n-1}$
+ \column{0.5\textwidth}
+<<rnormPlot_cov, echo=FALSE, fig.height=5, fig.width=5, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Pearson Correlation}
+Describes the relationship between two variables.\\  Scaled between -1 and 1.\\
+\hfill \\
+$\rho_{xy}$ = population level correlation, $r_{xy}$ = correlation in your sample
+\begin{columns}
+ \column{0.5\textwidth}
+ \huge $\rho_{xy} = \frac{\sigma_{xy}}{\sigma_{x}\sigma_{y}}$
+ \column{0.5\textwidth}
+<<rnormPlot_cor, echo=FALSE, fig.height=5, fig.width=5, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \begin{frame}[fragile]
+\frametitle{Assumptions of Pearson Correlation}
+
+\begin{columns}
+\column{0.5\paperwidth}
+\begin{itemize}
+\item Observations are from a {\bf random sample}
+\item Each observation is {\bf independent}
+\item X and Y are from a {\bf Normal Distribution}
+\end{itemize}
+\column{0.5\paperwidth}
+<<mvnorm_persp, echo=FALSE, fig.height=5, fig.width=5, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The meaning of r}
+Y is perfectly predicted by X if r = -1 or 1.\\ \hfill \\
+$r^2$ = the porportion of variation in y explained by x
+<<corLevels, echo=FALSE, fig.height=5, fig.width=5, out.height="0.74\\textheight", out.width="0.74\\textheight">>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Testing if r $\ne$ 0}
+\Large
+Ho is r=0. Ha is r $\ne$ 0. \\
+\hfill \\
+\pause
+\begin{center}\bf{Testing:} $t= \frac{r}{SE_{r}}$ with df=n-2 \end{center}
+\hfill \\
+\pause 
+WHY n-2? \\
+\pause
+\hfill \\
+$$SE_{r} = \sqrt{\frac{1-r^2}{n-2}}$$ \\
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Example: Wolf Inbreeding and Litter Size}
+ \begin{columns}
+ \column{0.5\paperwidth}
+<<wolf_scatterplot, echo=FALSE, fig.height=4, fig.width=4, out.height="1\\textwidth", out.width="1\\textwidth">>=
+@
+ \column{0.5\paperwidth}
+   \includegraphics[width=0.8\textwidth]{./pics-11/CUTE_WOLF_PUPS_by_horsesrock44.jpeg}\\
+
+
+ \end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Example: Wolf Inbreeding and Litter Size}
+
+<<wolf_cor_cov>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Example: Wolf Inbreeding and Litter Size}
+
+<<wolves_cor_test>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Pufferfish Mimics \& Predator Approaches}
+ \begin{columns}
+ \column{0.5\paperwidth}
+ \begin{itemize}
+  \item Load up the pufferfish mimic data from W\&S
+  \item Plot the data
+  \item Assess the correlation and covariance
+  \item Assess Ho.  
+  \item Challenge - Evaluate Ha1:  the correlation is 1.
+ \end{itemize}
+ \column{0.5\paperwidth}
+   \includegraphics[width=0.8\textwidth]{./pics-11/thumb-categorie-foto-1046.jpeg}\\
+
+
+ \end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Pufferfish Mimics \& Predator Approaches}
+
+<<puffer_ha>>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Violating Assumptions?  }
+\Large
+ \begin{itemize}
+  \item Spearman's Correlation (rank based)
+  \item Distance Based Correlation \& Covariance ({\tt dcor}) 
+  \item Maximum Information Coefficient (nonparametric)\\
+
+ \end{itemize}
+ 
+ \begin{center}All are lower in power for linear correlations\end{center}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Spearman Correlation}
+ \begin{enumerate}
+  \item Transform variables to ranks, i.e.,2,3... ({\tt rank()})
+  \item  Compute correlation using ranks as data
+  \item If n $\le$ 100, use Spearman Rank Correlation table
+  \item If n $>$ 100, use t-test as in Pearson correlation
+ \end{enumerate}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Distance Based Correlation, MIC, etc.}
+\includegraphics[width=0.9\paperwidth]{./pics-11/Distance_Correlation_Examples.jpg}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+
+\huge Least Squares Regression\\ y = ax + b \\
+\hfill \\
+\footnotesize Then it's code in the data, give the keyboard a punch\\
+Then cross-correlate and break for some lunch\\
+Correlate, tabulate, process and screen\\
+Program, printout, regress to the mean\\
+-White Coller Holler by Nigel Russell
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{How are X and Y Related}
+ \begin{columns}
+ 
+ \column{0.5\paperwidth}
+ \includegraphics[width=0.9\textwidth]{./pics-11/regression.jpg} \\
+ \center Causation (regression) \\ p(Y $|$ X=x)
+ \column{0.5\paperwidth}
+ \center
+ \includegraphics[width=0.8\textwidth]{./pics-11/correlation.jpg}\\
+  Correlation \\ p(Y=y, X=x)
+
+ \end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Correlation v. Regression Coefficients}
+
+<<cor_and_reg, echo=FALSE, fig.height=3, fig.width=5, out.height="0.6\\textwidth", out.width="1\\textwidth">>=
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Basic Princples of Linear Regression}
+
+\begin{itemize}
+\large
+ \item Y is determined by X: p(Y $|$ X=x) \\ \hfill
+ \item The relationship between X and Y is Linear\\ \hfill
+ \item The residuals of Y= a + bx are normall distributed\\(i.e., Y = a + bX + e where e $~$ N(0,$\sigma$))
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Basic Principles of Least Squares Regression}
+
+$\widehat{Y} = a + bX$ - a = intercept, b = slope
+<<linefit, echo=FALSE>>=
+@
+Minimize Residuals defined as $SS_{residuals} = \sum(Y_{i} - \widehat{Y})^2$
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Solving for Slope}
+
+\center \huge $b=\frac{s_{xy}}{s_{x}^2}$ \pause $= \frac{cov(x,y)}{var(x)}$\\ 
+\hfill \\
+\pause
+$= r_{xy}\frac{s_{y}}{s_{x}}$
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Solving for Intercept}
+Least squares regression line always goes through the mean of X and Y
+\center \huge $\bar{Y} = a + b\bar{X}$
+\pause
+\hfill \\
+\hfill \\
+\begin{center} \huge a = $\bar{Y} - b\bar{X}$ \end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Fitting a Linear Model in R}
+
+
+<<set, echo=FALSE>>=
+par(cex.lab=1.5, cex.axis=1.2)
+@
+
+<<basic_lm1, tidy=FALSE>>=
+@
+\pause
+<<basic_lm2, tidy=FALSE>>=
+@
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Extracting Coefficients from a LM}
+
+<<coefs_lm, tidy=FALSE>>=
+@
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Extracting Fitted Values from a LM}
+
+<<yhat_lm, tidy=FALSE>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Plotting Fitted LMs}
+
+<<plot_lm2, tidy=FALSE, fig.height=4, fig.width=4, out.height="0.5\\textwidth", out.width="0.5\\textwidth">>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Plotting Fitted LMs}
+
+<<plot_lm, tidy=FALSE, fig.height=4, fig.width=4, out.height="0.5\\textwidth", out.width="0.5\\textwidth">>=
+@
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Ggplot2 and LMs}
+
+<<ggplot_lm, tidy=FALSE, fig.height=4, fig.width=4, out.height="0.5\\textwidth", out.width="0.5\\textwidth">>=
+@
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Checking Residuals}
+
+<<residual_lm, tidy=FALSE, fig.height=4, fig.width=8, out.height="0.5\\textwidth", out.width="1\\textwidth">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Pufferfish Mimics \& Predator Approaches}
+ \begin{columns}
+ \column{0.5\paperwidth}
+ \begin{itemize}
+  \item Fit the pufferfish data
+  \item Visualize the linear fit
+  \item Examine whether there is any relationship between fitted values, residual values, and treatment
+ \end{itemize}
+ \column{0.5\paperwidth}
+   \includegraphics[width=0.8\textwidth]{./pics-11/thumb-categorie-foto-1046.jpeg}\\
+
+
+ \end{columns}
+
+\end{frame}
+
+\end{document}
+

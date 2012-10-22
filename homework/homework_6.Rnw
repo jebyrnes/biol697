@@ -1,0 +1,156 @@
+\documentclass{article}
+\usepackage{enumerate} 
+
+    \usepackage{hyperref} %must be last
+<<prep, echo=FALSE, include=FALSE>>=
+opts_chunk$set(tidy=FALSE)
+opts_chunk$set(echo=FALSE)
+opts_chunk$set(include=FALSE)
+opts_chunk$set(comment="#")
+@
+\begin{document}
+
+\title{Homework 6} % provide title info
+\author{Biology 697} % provide author info
+\date{10/9/2012} % provide date
+\maketitle % format and print title page
+
+For this weeks' homework, we'll be working with a data set looking at mice in cold seasonally variable habitats.  The data contains four columns: Julian day, temperature (celsius), activity (number of foraging bouts in 6 hours), and food (g food found over 6 hours).  We'll investigate this data set and the patterns of correlation in the data in this week's homework.
+
+\section{Correlation}
+We talked about several correlation metrics this week.  Pearson's Correlation is when data are drawn from two normal distributions and share a linear relationship.  Spearman's correlation is a non-parametric technique when normality is violated that uses ranks.  The Distance Correlation is defined by comparing the pattern of pairwise distances between all values of X and the pattern of pairwise distances between all values of Y. \url{http://www.imstat.org/aoas/AOAS34INTRO.pdf} provides a lovely intro to it.\\
+
+\subsection {} Which {\tt pairs} of variables can we use Pearson's correlation?  Which will require non-parametric tests, and if so, which ones?
+
+<<viewData>>=
+activityDF <- read.csv("./seasonal_mouse_activity.csv")
+pairs(activityDF)
+
+# Activity v. Food is Spearman
+# Temp v. Food or Activity is Spearman
+# Julian Day  v. Anything is DCOR
+@
+
+\subsection{Spearman} Spearman's correlation works by calculating correlation based on rank rather than observed value.  Write a function to  calculate and test Spearman's correlation, and run it on the relationship between temperature and foraging activity.  You can compare it to results from {\tt cor.test(method="spearman")}
+
+<<spearmanFunc>>=
+spearman<-function(x,y){
+  sp <- cor(rank(x), rank(y))
+  se <- sqrt((1-sp^2)/length(x[-(1:2)]))
+  t<-sp/se
+  p<- pt(abs(t), df=length(x[-(1:2)]), lower.tail=F)*2
+  return(list(spearman=sp, se=se, t=t, p=p))
+}
+
+with(activityDF, spearman(activity, temperature))
+
+with(activityDF, cor.test(activity, temperature, method="spearman"))
+@
+
+\subsection{Comparing Parametric v. Nonparametric Techniques} How do results differ between the three correlation techniques for the relationship between Julian day and temperature?  What about activity and food?  Use {\tt dcor} from the energy package and {\tt dcov.test} to evaluate distance based correlation
+
+<<compareNonParams>>=
+library(energy)
+
+with(activityDF, {
+  print(cor.test(julian_day, temperature))
+  print(cor.test(julian_day, temperature, method="spearman"))
+  print(dcov.test(julian_day, temperature))
+  print(dcor(julian_day, temperature))
+  
+})
+## Pearson and Spearman's correlations have small 
+## negative values while dcor has a larger positive value.
+## Intriguingly, all are different from 0.
+
+
+with(activityDF, {
+  print(cor.test(food, activity))
+  print(cor.test(food, activity, method="spearman"))
+  print(dcov.test(food, activity))
+  print(dcor(food, activity))  
+})
+
+# While all are positive and different from 0
+# Pearson's correlation is 0.58 while the other two are ~0.48. 
+
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Regression}
+\subsection{Diagnostics}
+%Fit a regression and decide it's a bad idea
+Aside from eyeballing the relationships, show why we cannot evaluate the relationship between temperature and activity using a ordinary least squares linear regression.
+<<badLM>>=
+
+badlm<-lm(activity ~ temperature, data=activityDF)
+
+par(mfrow=c(2,3))
+plot(badlm, which=1:5)
+par(mfrow=c(1,1))
+
+# BIG pattern in the fitted v. residual relationship.  
+# Also patterns in leverage v. std. residuals, and some big deviations in the QQ plot
+@
+
+%Evaluate a regression that's good
+\subsection{Fit}
+Evaluate and discuss the relationship between foraging and food found.  If it can indeed be evaluated.
+<<goodLM>>=
+goodLM <- lm(food ~ activity, data=activityDF)
+
+#diagnostics
+par(mfrow=c(2,2))
+plot(goodLM)
+par(mfrow=c(1,1))
+
+#Diagnostics are all a-ok
+
+
+#see the output
+summary(goodLM)
+
+# Activity positively appears to influence food encountered.
+# However, the relationship only explains 33% of the variation in the data.
+# So, more is going on here...
+
+@
+
+%power of regression with respect to range
+\section{The Effect of Range}
+One of the major issues with regression is that estimation and hypotheses testing can be influenced by the spread of your data.  Take a look at the relationship between activity and food acquisituion.  \\
+
+\subsection{}
+Fit and evaluate the relationship using only activity values between 3 and 9.  How does it compare to the fit of the full model?  If you answere that the relationship went away, you'd be right - even with 46 data points.  Range can matter a great deal - particularly with small sample sizes or high variation.  Explore this for yourself.  Generate 100 simulations where you draw out a subset of 10 random rows from the data.  Calculate the range of the observed values of activity in each simulation.  Also get the p-value for the slope of activity's influence on food.  (n.b. summary(aLM) produces a list.  One item in that list is called coef, which is a matrix from which you can pluck a p-value).  Is there some critical range past which the p-value seem to settle down.?
+
+<<fitSmall>>=
+smallLM <- lm(food ~ activity, data=activityDF[which(activityDF$activity > 3 
+                                                     & activityDF$activity < 9),])
+summary(smallLM)
+#no relationship!
+@
+
+<<sampPower>>=
+set.seed(9000)
+n.sims<-100
+p<-rep(NA, n.sims)
+rng <- rep(NA, n.sims)
+sizeDraw <- 10
+for (i in 1:100) {
+  smallDF <- activityDF[sample(1:nrow(activityDF), size=sizeDraw),]
+  rng[i] <- max(smallDF$activity) - min(smallDF$activity)
+  alm <- lm(food ~ activity, data=smallDF)
+  p[i] <- summary(alm)$coef[2,4]
+}
+
+plot(p ~ rng)
+#looks like about 30
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Extra Credit}
+Hubway, the Boston based bike rental company, is releasing all of their trip data.   The data set is huge - about 60 MB.  They're also providing lat and long information for all stations.  They are hosting a data visualization challenge at \url{http://hubwaydatachallenge.org}.  For your extra credit, find and visualize something interesting in the data.  Note, ggplot and it's map geom might come in handy (or not).  If you also want to play with breaking down and analyzing data using different groupings, you may want to look into the plyr library at \url{http://plyr.had.co.nz/} and available on CRAN.  We'll be using plyr later in the course, but, it might be useful for exploring the data.
+\\ \hfill \\
+Extra points for each interesting or surprising thing you find.  And, heck, if you get into this, enter the challenge!
+
+\end{document}

@@ -1,0 +1,17 @@
+\documentclass{article}
+
+\begin{document}
+
+%What do do when it's nonlinear?
+%1) If it's additively nonlinear, fit it
+%2) Transform, but be careful
+%3) NLS
+%%%% Exercise
+%4) GLM!  
+%5) Poisson
+%6) Quasipoisson & N.B.
+%%%% Exercise...wolves
+%7) Gamma....
+%8) Logistic
+
+\end{document}

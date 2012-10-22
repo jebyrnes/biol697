@@ -1,0 +1,409 @@
+\documentclass{beamer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lecture 13 - Apply and Likelihood
+%%%   
+%%%
+%%% Last Modified 10/15/2012
+%%%
+%%% Changelog:
+%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\input{handoutPreamble.Rnw} %for when we use the handout argument for documentclass
+\input{slidePreamble.Rnw}
+
+%%%%%load in code chunks, and run some preperatory code
+<<set-options, echo=FALSE, cache=FALSE, include=FALSE>>=
+source("./beamerPrep.R")
+read_chunk("./lecture_13.R")
+
+opts_chunk$set(size = "footnotesize")
+opts_chunk$set(fig.align = "center")
+opts_chunk$set(out.height="0.55\\textwidth")
+opts_chunk$set(out.width="0.55\\textwidth")
+opts_chunk$set(tidy=FALSE)
+opts_chunk$set(prompt=FALSE)
+opts_chunk$set(comment="#")
+
+par(mar=c(5,4,2,2))
+@
+
+<<lecture13prep, echo=FALSE, cache=TRUE, include=FALSE>>=
+@
+
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\huge Iteration \& Likelihood
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{For Loops!}
+
+<<forBad, eval=FALSE, size="Large", tidy=FALSE>>=
+x<-1:100000
+#
+for (i in x){
+  x[i]<-x[i] +1  
+}
+@
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{For Loops: Costs \& Benefits}
+Benefits:
+\begin{enumerate}
+ \item Remove repetitive code
+ \item Can {\emph map} same operation across a vector, matrix, list, etc.
+\end{enumerate} 
+
+\hfill \\
+Costs:
+\begin{enumerate}
+ \item Slow.
+ \item Lots of Code.
+\end{enumerate} 
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Speed: Many Operations Faster via \emph{Vectorization}}
+
+<<vectorize1, size="Large">>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Many Operations Faster via \emph{Vectorization}}
+
+<<Timevectorize1, cache=TRUE>>=
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Vectorization Ubiquitos}
+
+<<vectorize2, size="normalsize", tidy=TRUE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Vectorization Ambiguous in Many Instances...}
+
+<<vectorizationBad, size="normalsize", width=80>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{How to \tt{Vectorize} Ambiguous Functions}
+
+<<vectorizationGood, size="normalsize">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{The Guts of \tt{Vectorize}}
+
+<<vectorizationGuts, size="scriptsize">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Minimizing Code for Mapping Functions: the Apply Family}
+
+Take an object type - vector, matrix, list, etc., and map a function to every element, cleanly and quickly.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{sapply for Vectors}
+
+<<sapply1, size="Large">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Anonymous Functions and sapply}
+
+<<sapply2, size="Large">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Apply Statements Faster than For Loops}
+
+<<sapplyTime, size="normalsize">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Lots of Possibilities with sapply}
+
+<<sapply3, size="normalsize">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Many Output Types with sapply}
+
+<<sapplyMatrix, size="normalsize">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{apply for Matrices}
+
+<<apply1, size="normalsize">>=
+@
+\pause
+<<apply1a, size="normalsize">>=
+@
+\pause
+<<apply1b, size="normalsize">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{apply for Matrices}
+
+<<apply2, size="normalsize">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{lapply for Lists - mclapply to use multiple cores}
+
+<<lapply>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Apply Yourself!}
+\begin{enumerate}
+ \item Using sapply, write a short script to show the relationship between n and estimated mean for a normally distributed population with a  mean of 5 and SD of 3.
+ \item Challenge: What is the bootstrapped SE at each sample size? 50 boots! \\ \hfill \\ hint: 2 lines with bootstrap, 3-4 with nested sapply
+\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Apply Yourself!}
+
+<<exercise1, echo=-3>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Apply Yourself!}
+
+<<exercise2, out.height="0.45\\textwidth", out.width="0.45\\textwidth",echo=-3>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Apply Yourself!}
+
+<<exercise2a, out.height="0.45\\textwidth", out.width="0.45\\textwidth", size="scriptsize", echo=-4>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+
+\Huge Application of Iterative Solutions: Likelihood
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+
+\begin{huge} Likelihood: how well data support a given hypothesis. \\ \hfill \\
+\pause \end{huge}
+Note: Each and every parameter choice IS a hypothesis
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Likelihood Defined}
+
+\center 
+\begin{huge} $$L(\theta | D) = p(D | \theta)$$ \end{huge}
+\hfill \\ Where D is the data and $\theta$ is some choice of parameter values
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Maximum Likelihood}
+
+
+\begin{huge} The Maximum Likelihood Estimate is the value at which $p(D | \theta)$ is highest. \end{huge}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Example of Maximum Likelihood}
+Let's say we have counted 10 individuals in a plot.  Given that the population is Poisson distributed, what is the value of $\lambda$?
+<<likelihoodSapply, out.height="0.45\\textwidth", out.width="0.45\\textwidth", echo=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Enter Iteration}
+I did this by searching all values of $\lambda$ using sapply
+<<likelihoodSapply, echo=TRUE, eval=FALSE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Maximum Likelihood}
+
+
+\begin{huge} We often maximize log-likelihood because of the more well behaved properties of Log-Likelihood values \end{huge}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Log-Likelihood}
+<<LoglikelihoodSapply, echo=FALSE, eval=TRUE>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\huge{What about Many Data Points?}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Start with a Probability Distribution}
+<<likelihoodPrep, echo=FALSE, eval=TRUE>>=
+@
+\begin{columns}
+\column{0.02\paperwidth}
+\column{0.53\paperwidth}
+<<likelihoodDemo1, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4, out.width="1\\textwidth", out.height="1\\textwidth">>=
+@
+\column{0.45\paperwidth}
+$$p(x) = \frac{\lambda^{x}e^{-\lambda}}{x!}$$
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is the probability of the data given the parameter?}
+\begin{columns}
+\column{0.02\paperwidth}
+\column{0.53\paperwidth}
+<<likelihoodDemo2, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4, out.width="1\\textwidth", out.height="1\\textwidth">>=
+@
+\column{0.45\paperwidth}
+$$p(x) = \frac{\lambda^{x}e^{-\lambda}}{x!}$$
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{What is the probability of the data given the parameter?}
+\begin{columns}
+\column{0.02\paperwidth}
+\column{0.53\paperwidth}
+<<likelihoodDemo2, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4, out.width="1\\textwidth", out.height="1\\textwidth">>=
+@
+\column{0.45\paperwidth}
+\begin{center}p(a and b) = p(a)p(b)\end{center}
+$$p(D | \theta) = \prod_{i=1}^n p(d_{i} | \theta)$$
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Can Compare p(data | H) for alternate H}
+<<likelihoodDemo3, echo=FALSE, eval=TRUE, fig.height=4, fig.width=8, out.width="1\\textwidth">>=
+@
+\begin{center}Compare $p(D|\theta_{1})$ versus $p(D|\theta_{2})$\end{center}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Calculating Likelihood and Log-Likelihood for a Data Set}
+<<likelihoodSapply1>>=
+@
+\pause
+<<likelihoodSapply2>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Likelihood and Log-Likelihood of a Data Set}
+<<likelihoodSapply1Plot, echo=FALSE, eval=TRUE, fig.height=4, fig.width=8, out.width="1\\textwidth", out.height="0.5\\textwidth">>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+ \begin{itemize}
+  \item Load the Bee Lifespan Data
+  \item Model Bee Lifespans as a Gamma Distribution with shape = 1 (1 bee per death)
+  \item What is the ML estimate of a Bee's Lifespan?
+ \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+<<beeExample, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+<<beeExampleCode>>=
+@
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{Exercise: Likelihood and Bees!}
+<<beeExamplePlot, echo=FALSE, eval=TRUE, fig.height=4, fig.width=4>>=
+@
+\end{frame}
+
+\end{document}
+

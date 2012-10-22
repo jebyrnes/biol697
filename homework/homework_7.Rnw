@@ -1,0 +1,205 @@
+\documentclass{article}
+\usepackage{enumerate} 
+
+    \usepackage{hyperref} %must be last
+
+
+<<prep, include=FALSE>>=
+opts_chunk$set(echo=FALSE)
+opts_chunk$set(include=FALSE)
+opts_chunk$set(tidy=FALSE)
+opts_chunk$set(out.height = "0.7\\textwidth")
+opts_chunk$set(out.width = "0.7\\textwidth")
+@
+
+<<loadData, echo=FALSE, include=FALSE>>=
+spiders <- read.csv("../lectures/data/03e2SpiderRunningAmputation.csv")
+birds <- read.csv("../lectures/data/02e1bDesertBirdCensus.csv")
+@
+
+\begin{document}
+
+\title{Homework 7} % provide title info
+\author{Biology 697} % provide author info
+\date{10/19/2012} % provide date
+\maketitle % format and print title page
+ 
+\section{Single Parameter Likelihood}
+To assess the health of multiple desert bird populations, scientists sampled the abundance of a number of species.  You've been asked to model the distribution.  Given the shape of the data, and that these results are largely driven by similarly sized adult population minus a small amount of mortality, you select the geometric distribution (see Bolker and investigate {\tt dgeom}).  This distribution has a single parameter, p, typically the probability of failure - i.e., the probability of not observing any more birds of a given species while sampling.
+
+\subsection{} Using Likelihood, find this probability.  Also, plot the likelihood curve and determine the 95\% CI.
+<<mlebirds>>=
+
+hist(birds$Count, breaks=50)
+
+LLbirdGeom <- function(p) sum(dgeom(birds$Count, p, log=TRUE))
+
+#ok, p has to be between 0 and 1, so...
+p<-seq(0.001,1,.001)
+geomLogLik <- sapply(p, LLbirdGeom)
+
+#What is the MLE?
+max(geomLogLik)
+MLEgeom <- p[which(geomLogLik == max(geomLogLik))]
+MLEgeom
+
+#plot it!
+plot(p, geomLogLik)
+
+#zoom in!
+plot(p, geomLogLik, xlim=c(0,0.2), ylim=c(-300,-220))
+
+#Get the CI
+confGeom <- p[which(geomLogLik >= (max(geomLogLik) - 1.92))]
+confGeom
+@
+
+\subsection{} Based on  previous sampling events, scientists expected a value of the parameter to be 0.15.  Can we reject the hypothesis that the parameter is 0.15?  
+<<mlebirdsTest>>=
+G <- 2*(max(geomLogLik) - LLbirdGeom(0.017))
+pchisq(G, 1, lower.tail=FALSE)
+@
+
+\subsection{} One niggling question keeps coming up.  Maybe a Poisson distribution would have been better, modelling lambda as the mean number of birds.  Compare the likelihood of a model fitted with a Poisson distribution to that of the Geometric.  How different are they?  Which would provide a better description of the data?
+
+<<mleBirdsPoisson>>=
+lambda <- seq(0, 200, .1)
+LLbirdPois <- function(lambda) sum(dpois(birds$Count, lambda, log=TRUE))
+poisLogLik <- sapply(lambda, LLbirdPois)
+
+max(geomLogLik) - max(poisLogLik)
+@
+
+\section{Multiparameter Likelihood - Brute Force Style}
+ Another data set provided by W\&S regards the running speed of male spiders before and after they amputate one of their spermatophores after sex.  The idea is that lighter male spiders can run away faster from their hungry mate.
+
+\subsection{}
+Using brute force (iteration) use likelihood to estimate the mean and SD of the male spiders' running speed pre-amputation.  Plot the Log-Likelihood surface using the function of your choice - countour, persp, or anything you find interesting.  Note, for contour and persp, the x and y arguments are vectors of values in order along an axis, and z is a matrix where, at every cell [i,k], you have a function calculated using x[i] and y[j].  You could also use ggplot2 with a color argument to lay out a surface.  It might help to plot the distribution to guess at what values you should iterate over.
+
+<<spiderSurface>>=
+#plot things to see mean and approximate SD
+hist(spiders$speed.before)
+
+#vectors
+meanVec <- seq(1,3.5, .01)
+sdVec <- seq(0.5,1,.01)
+
+spiderFun <- function(m, s) -sum(dnorm(spiders$speed.before, mean=m, sd=s, log=T))
+
+#nested sapply to generate a matrix where rows are SD and cols are mean values
+LLMat <- sapply(meanVec, function(x) sapply(sdVec, function(y) spiderFun(x,y) ))
+
+#get the MLE index
+LLIdx <- which(LLMat==min(LLMat), arr.ind=T)
+sdVec[LLIdx[1]]
+meanVec[LLIdx[2]]
+
+#plot the surface
+contour(meanVec, sdVec, t(LLMat), levels=c(14, 15, 15.2, 15.2, 15.3, 15.7, 16, 17, 18, 20, 22, 24, 30,40, 50, 60))
+
+#if you want to get fancy and 3d
+persp(meanVec, sdVec, t(LLMat))
+@
+
+\subsection{}
+Now, do the same fit with mle2, just to check yourself.
+<<mle2Spider>>=
+library(bbmle)
+spiderBeforeMLE <- mle2(speed.before ~ dnorm(mean=m, sd=s), data=spiders, start=list(m=3, s=1))
+summary(spiderBeforeMLE)
+@
+
+
+\subsection{}
+Now for the fun.  Using brute force, calculate the profile Log-Likelihood for each parameter, and use them to determine the 95\% CI.  As we only touched on this briefly in class, here's a reminder of how to get the 95\% CI for any paramater of interest.\\
+\begin{enumerate}
+ \item For the parameter of interest, iterate over a many values and calculte the log-likelihood at each iteration for a model where all other parameters have been maximized. 
+ \item This curve is your profile, and the log-likelihood at each value of your parameter is the log-likelihood you'll use when determining the 95\% CI
+ \item Now determine all values of the parameter that fall within 1.92 log-likelihood units of the MLE.  This is your CI.
+\end{enumerate}
+
+For those of you who have created a matrix above, well, you've already done all of the fitting you'll need to determine the profile.  You can write some code that will generate a profile using that matrix.  Or, if you haven't fit a matrix (or don't want to use the one you've fit), you can brute-force create a profile.  Once you have the profile in hand, determine the bounds of the 95\% CI.  2 Extra points for adding those profile lines to your previous plot of the likelihood surface. Notice anything interesting?\\
+
+
+<<spiderProfile>>=
+
+#Get the values used in the profile
+
+#quick function to extract a profile from a matrix
+profileFromMat <- function(rowCol) data.frame(t(apply(LLMat, rowCol, function(x) c(ll = min(x), idx = which(x == min(x))))))
+
+#now get the profiles.  You'll want to get the 
+#opposing values for later plotting
+meanProfile <- profileFromMat(2)
+meanProfile$sd <- sdVec[meanProfile$idx]
+
+sdProfile <- profileFromMat(1)
+sdProfile$mean <- meanVec[sdProfile$idx]
+
+#now get the CI along the profile Ridge
+minNegLL <- min(LLMat)
+meanVec[which(meanProfile$ll<= minNegLL + 1.92)]
+sdVec[which(sdProfile$ll<= minNegLL + 1.92)]
+
+
+#plot it
+contour(meanVec, sdVec, t(LLMat), levels=c(14, 15, 15.2, 15.2, 15.3, 15.7, 16, 17, 18, 20, 22, 24, 30,40, 50, 60), xlab="Mean", ylab="SD")
+lines( sdProfile$mean, sdVec, col="red", lwd=2, lty=2)
+lines( meanVec, meanProfile$sd, col="blue", lwd=2, lty=4)
+
+@
+
+\subsection{} Check yourself by plotting the profiles from the mle2 fit and examining the confidence intervals.  
+<<mleProfile>>=
+plot(profile(spiderBeforeMLE))
+confint(spiderBeforeMLE)
+@
+
+
+\section{Linear Regression and Likelihood}
+So the question still remains, does it work?  Do spiders get faster after they amputate?  One way to investigate this is to see if there is a relationship between running speed before and after. If there is, and the slope is greater than 1, then amputation may be beneficial.
+
+
+\subsection{Regression with Functions} Write a function that will give you the negative log-likelihood of a linear regression fit to the data.  Then use {\tt mle2} with that function to get the maximum likelihood estimates of those parameters.  Note, you may need to play with start values a bit to get a fit.
+
+<<spiderBeforeAfter>>=
+plot(speed.after ~ speed.before, data=spiders)
+
+spiderRegressionFunc <- function(intercept, slope, sd) -sum(dnorm(speed.after, 
+                                                                  mean=intercept + slope*speed.before, 
+                                                                  sd=sd))
+spiderMLE <- mle2(spiderRegressionFunc, data=spiders, start=list(intercept = 3, slope = 0, sd = 1))
+
+summary(spiderMLE)
+@
+
+\subsection{Regression with Just mle2} Huh.  Why did you have all of those NA issues?  Sometimes, using a function, you can search into areas of parameter space which give bad results - i.e., if the SD is less than 0.  You can write a function to avoid these issues.  But that can get hairy.  This is one reason that mle2 implements a number of standard distributions - to help you avoid getting on the wrong track.  So, let's see what MLE2 will cool up if you let it do its work.  Fit the same linear relationship just using {\tt mle2} and no external function.  How do the estimates compare to linear regression?
+<<spiderBeforeAfter1>>=
+spiderMLE2 <- mle2(speed.after ~ dnorm(mean=intercept + slope*speed.before, sd=sd), data=spiders, start=list(intercept = 3, slope = 0, sd = 1))
+summary(spiderMLE2)
+summary(lm(speed.after ~ speed.before, data=spiders))
+
+@
+
+\subsection{Confidence} What is the 95\% CI?  How do the profile and Wald estimates compare? Plot the profiles to help you answer.
+<<spiderCI>>=
+plot(profile(spiderMLE2))
+confint(spiderMLE2)
+confint(spiderMLE2, method="quad")
+@
+
+\subsection{Is there a slope?} Test two alternate hypotheses against your MLE fit.  First, that there is actually no relatioship between before and after speed.  Second, that there is a relationship, and that it is 1.2 (so, greater than 1).  What do your results from these tests tell you about spider amputation?
+
+<<compareSpider>>=
+#test the null
+spiderMLE0 <- mle2(speed.after ~ dnorm(mean=intercept, sd=sd), data=spiders, start=list(intercept = 3.85375,  sd = 1))
+summary(spiderMLE0)
+anova(spiderMLE0, spiderMLE2) 
+
+
+#test the alternate hypothesis against the MLE
+spiderMLE1.5 <- mle2(speed.after ~ dnorm(mean=intercept + 1.5*speed.before, sd=sd), data=spiders, start=list(intercept = 3,  sd = 1))
+anova(spiderMLE1.5, spiderMLE2) 
+@
+
+\end{document}
